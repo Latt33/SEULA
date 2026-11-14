@@ -84,7 +84,7 @@ export function Region() {
             [`€${Math.round(pilot.net / 1000)}k`, 'net saving each year, after all costs'],
           ].map(([v, l]) => (
             <div key={l} className="card-cream p-6 text-foreground">
-              <p className="text-4xl font-medium text-deep tnum mb-2">{v}</p>
+              <p className="font-serif font-light text-5xl text-deep tnum mb-2">{v}</p>
               <p className="text-muted-foreground">{l}</p>
             </div>
           ))}

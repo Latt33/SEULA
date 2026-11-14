@@ -39,7 +39,17 @@ export interface VoiceFeatures {
   shimmerRaw: number;
   mpt: number; // s
   nPeriods: number;
+  spectrogram?: Spectrogram;
   quality: VoiceQuality;
+}
+
+/** Low-resolution magnitude spectrogram for display. 8-bit dB values, row-major (time × freq). Not invertible to audio. */
+export interface Spectrogram {
+  w: number; // time frames
+  h: number; // frequency bins, 0..maxHz
+  maxHz: number;
+  durationS: number;
+  data: string; // base64 of Uint8 w*h, 0 = −60 dB, 255 = peak
 }
 
 export interface SpeechFeatures {
@@ -547,6 +557,56 @@ export function cppsRaw(xIn: Float32Array, srIn: number, opts: { winSec?: number
   return { mean: mean(perFrame), perFrame };
 }
 
+// ───────────────────────── spectrogram (display only) ─────────────────────────
+
+function toBase64(u: Uint8Array): string {
+  let bin = '';
+  for (let i = 0; i < u.length; i++) bin += String.fromCharCode(u[i]);
+  return btoa(bin); // available in browsers and Node 16+
+}
+export function fromBase64(b: string): Uint8Array {
+  const s = atob(b);
+  const u = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
+  return u;
+}
+
+/** Narrow-band: 40 ms Hann frames (25 Hz resolution) so individual harmonics show; 0–maxHz, 60 dB range. */
+export function spectrogram(xIn: Float32Array, srIn: number, w = 180, h = 100, maxHz = 2500): Spectrogram {
+  const sr = 10000;
+  const x = resample(xIn, srIn, sr);
+  const win = Math.round(0.04 * sr);
+  const nfft = 1024;
+  const wnd = hann(win);
+  const dur = x.length / sr;
+  const hop = Math.max(1, (x.length - win) / (w - 1));
+  const binHz = sr / nfft;
+  const maxBin = Math.floor(maxHz / binHz);
+  const db = new Float64Array(w * h);
+  const re = new Float64Array(nfft);
+  const im = new Float64Array(nfft);
+  let peak = -Infinity;
+  for (let t = 0; t < w; t++) {
+    const s0 = Math.round(t * hop);
+    re.fill(0);
+    im.fill(0);
+    for (let i = 0; i < win; i++) re[i] = (x[s0 + i] ?? 0) * wnd[i];
+    fft(re, im);
+    for (let f = 0; f < h; f++) {
+      const b0 = Math.floor((f / h) * maxBin);
+      const b1 = Math.max(b0 + 1, Math.floor(((f + 1) / h) * maxBin));
+      let m = 0;
+      for (let b = b0; b < b1; b++) m = Math.max(m, re[b] * re[b] + im[b] * im[b]);
+      const v = 10 * Math.log10(m + 1e-12);
+      db[t * h + f] = v;
+      if (v > peak) peak = v;
+    }
+  }
+  const u = new Uint8Array(w * h);
+  for (let i = 0; i < u.length; i++) u[i] = Math.max(0, Math.min(255, Math.round(((db[i] - peak + 60) / 60) * 255)));
+  return { w, h, maxHz, durationS: dur, data: toBase64(u) };
+}
+
 // ───────────────────────── quality ─────────────────────────
 
 function quality(x: Float32Array, sr: number, voicedFraction: number, minDur: number): VoiceQuality {
@@ -639,6 +699,7 @@ export function analyzeSustainedVowel(xIn: Float32Array, srIn: number): VoiceFea
     mpt: best,
     nPeriods: periods.length,
     quality: quality(x, sr, voicedFraction, 2.5),
+    spectrogram: spectrogram(x.subarray(Math.max(0, Math.floor((bestRun[0] - 0.3) * sr)), Math.min(x.length, Math.ceil((bestRun[1] + 0.3) * sr))), sr),
   };
 }
 

@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { ClipboardCopy, FileJson, Mic } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { ClipboardCopy, FileJson } from 'lucide-react';
+import { VoicePanel } from '../components/VoicePanel';
 import { Cite, LevelBadge, Page } from '../components/ui';
 import { DEMO_PATIENTS, DemoPatient } from '../data/demoPatients';
 import { assess, Assessment, DURATION_LABEL, LEVEL_META, PLCO_THRESHOLD, SYMPTOM_LABEL, SymptomKey, G8_THRESHOLD, VHI10_THRESHOLD } from '../engine/questionnaire';
 import { anamnesis, toFhir } from '../engine/report';
-import { VOICE_REFERENCES, VoiceFeatures } from '../engine/voice';
+import { VoiceFeatures } from '../engine/voice';
 import { useSession } from '../store/session';
 
 type Row = DemoPatient & { r: Assessment; isMe?: boolean };
@@ -30,14 +31,14 @@ export function Clinician() {
     <Page wide tint>
       <div className="mb-10 max-w-3xl">
         <p className="eyebrow mb-3">For doctors</p>
-        <h1 className="text-4xl md:text-5xl text-deep mb-4">Your morning list, already sorted</h1>
+        <h1 className="text-5xl md:text-6xl text-deep mb-5">Your morning list, already sorted</h1>
         <p className="text-lg text-muted-foreground">{rows.length} patients answered before their visit. {needTest} need a test within two weeks. Pick a patient to see why.</p>
       </div>
 
       <div className="grid lg:grid-cols-[300px_1fr] gap-6">
         <aside className="card p-2 h-fit lg:sticky lg:top-24">
           {rows.map((x) => (
-            <button key={x.id} onClick={() => setSel(x.id)} className={`w-full text-left px-4 py-3 rounded-xl flex gap-3 items-center transition-colors ${sel === x.id ? 'bg-sage/70' : 'hover:bg-mist'}`}>
+            <button key={x.id} onClick={() => setSel(x.id)} className={`w-full text-left px-4 py-3 rounded-xl flex gap-3 items-center transition-colors ${sel === x.id ? 'bg-mist' : 'hover:bg-mist/60'}`}>
               <span className="flex-1 min-w-0">
                 <span className="block font-medium text-deep truncate">{x.name}</span>
                 <span className="block text-sm text-muted-foreground truncate">{x.appointment} · {x.reason}</span>
@@ -46,7 +47,7 @@ export function Clinician() {
             </button>
           ))}
         </aside>
-        <Packet key={p.id} p={p} />
+        <Packet key={p.id} p={p} reference={p.id === 'p2' ? rows.find((x) => x.id === 'p1') : rows.find((x) => x.id === 'p2')} />
       </div>
     </Page>
   );
@@ -56,8 +57,8 @@ function sig(v?: VoiceFeatures) {
   return v ? { cpps: v.cpps, jitter: v.jitterLocal, shimmer: v.shimmerLocal, hnrSd: v.hnrSd, mpt: v.mpt, qualityOk: v.quality.ok } : undefined;
 }
 
-function Packet({ p }: { p: Row }) {
-  const { r, answers: a } = p;
+function Packet({ p, reference }: { p: Row; reference?: Row }) {
+  const { r, answers: a, voice } = p;
   const [tab, setTab] = useState<Tab>('why');
   const meta = LEVEL_META[r.level];
   const actions = r.findings.filter((f) => f.level !== 'info');
@@ -67,7 +68,7 @@ function Packet({ p }: { p: Row }) {
     <section className="space-y-5 min-w-0">
       <div className="card p-7">
         <div className="flex flex-wrap items-baseline justify-between gap-3 mb-1">
-          <h2 className="text-3xl text-deep">{p.name}{a.age ? `, ${a.age}` : ''}</h2>
+          <h2 className="text-4xl text-deep">{p.name}{a.age ? `, ${a.age}` : ''}</h2>
           <LevelBadge level={r.level} long />
         </div>
         <p className="text-muted-foreground mb-6">“{p.reason}”{symptoms.length > 0 && ` · ${symptoms.map(([k, d]) => `${SYMPTOM_LABEL[k].toLowerCase()} ${DURATION_LABEL[d as 'lt3w'].replace(' weeks', ' wk')}`).join(', ')}`}</p>
@@ -84,10 +85,12 @@ function Packet({ p }: { p: Row }) {
         </div>
       </div>
 
+      {voice && <VoicePanel voice={voice} reference={reference?.voice} referenceLabel={reference?.id === 'p1' ? 'a strained voice' : 'a steady voice'} />}
+
       <div className="card">
         <div className="flex gap-1 p-2 border-b border-line">
-          {([['why', 'Why'], ['scores', 'Scores and voice'], ['notes', 'Notes for the record']] as [Tab, string][]).map(([k, l]) => (
-            <button key={k} onClick={() => setTab(k)} className={`px-4 py-2 rounded-full text-[15px] transition-colors ${tab === k ? 'bg-sage text-deep font-medium' : 'text-muted-foreground hover:text-deep'}`}>{l}</button>
+          {([['why', 'Why'], ['scores', 'Scores'], ['notes', 'Notes for the record']] as [Tab, string][]).map(([k, l]) => (
+            <button key={k} onClick={() => setTab(k)} className={`px-4 py-2 rounded-full text-[15px] transition-colors ${tab === k ? 'bg-deep text-cream' : 'text-muted-foreground hover:text-deep'}`}>{l}</button>
           ))}
         </div>
         <div className="p-7">
@@ -133,29 +136,13 @@ function Why({ p }: { p: Row }) {
 }
 
 function Scores({ p }: { p: Row }) {
-  const { r, answers: a, voice } = p;
+  const { r, answers: a } = p;
   return (
     <div className="grid md:grid-cols-2 gap-x-10 gap-y-7">
-      <div className="space-y-6">
-        <p className="font-medium text-deep">Questionnaires</p>
-        <Gauge label="Lung cancer risk, 6 years (PLCOm2012)" value={r.scores.plco !== undefined ? r.scores.plco * 100 : undefined} unit="%" threshold={PLCO_THRESHOLD * 100} max={10} dir="above" cite="plco" na="Not a smoker" />
-        <Gauge label="Voice handicap (VHI-10)" value={r.scores.vhi10} unit="/40" threshold={VHI10_THRESHOLD} max={40} dir="above" cite="arffa2012" na="No voice change reported" />
-        <Gauge label="Frailty screen (G8)" value={r.scores.g8} unit="/17" threshold={G8_THRESHOLD} max={17} dir="below" cite="bellera2012" na="Under 70" />
-        <p className="text-sm text-muted-foreground">Quality of life (EQ-5D-5L): {a.eq5d ? ['mobility', 'selfcare', 'activities', 'pain', 'anxiety'].map((k) => a.eq5d![k as 'pain'] ?? '·').join('') : '–'} · health today {a.eqVas ?? '–'}/100</p>
-      </div>
-      <div className="space-y-6">
-        <p className="font-medium text-deep flex items-center gap-2"><Mic size={16} className="text-primary" /> Voice, measured on the patient’s phone</p>
-        {voice ? (
-          <>
-            <Gauge label="Voice clarity (CPPS)" value={voice.cpps} unit=" dB" threshold={VOICE_REFERENCES.cpps.threshold} max={25} dir="below" cite="murton2020" />
-            <Gauge label="Pitch steadiness (jitter)" value={voice.jitterLocal} unit="%" threshold={VOICE_REFERENCES.jitterLocal.threshold} max={4} dir="above" cite="teixeira2013" />
-            <Gauge label="Loudness steadiness (shimmer)" value={voice.shimmerLocal} unit="%" threshold={VOICE_REFERENCES.shimmerLocal.threshold} max={12} dir="above" cite="teixeira2013" />
-            <p className="text-sm text-muted-foreground">Breath on one “aaah”: {voice.mpt.toFixed(1)} s. Voice measures can prompt a question but never raise urgency on their own. <Link to="/evidence" className="underline">How we checked them</Link></p>
-          </>
-        ) : (
-          <p className="text-muted-foreground">No recording.</p>
-        )}
-      </div>
+      <Gauge label="Lung cancer risk, 6 years (PLCOm2012)" value={r.scores.plco !== undefined ? r.scores.plco * 100 : undefined} unit="%" threshold={PLCO_THRESHOLD * 100} max={10} dir="above" cite="plco" na="Not a smoker" />
+      <Gauge label="Voice handicap (VHI-10)" value={r.scores.vhi10} unit="/40" threshold={VHI10_THRESHOLD} max={40} dir="above" cite="arffa2012" na="No voice change reported" />
+      <Gauge label="Frailty screen (G8)" value={r.scores.g8} unit="/17" threshold={G8_THRESHOLD} max={17} dir="below" cite="bellera2012" na="Under 70" />
+      <div className="flex justify-between text-[15px]"><span>Quality of life (EQ-5D-5L)</span><span className="tnum text-deep">{a.eq5d ? ['mobility', 'selfcare', 'activities', 'pain', 'anxiety'].map((k) => a.eq5d![k as 'pain'] ?? '·').join('') : '–'} · {a.eqVas ?? '–'}/100</span></div>
     </div>
   );
 }

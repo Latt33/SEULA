@@ -4,17 +4,19 @@
 
 /* SEULA: calm clinical palette. Deep sage instead of saturated green, warm cream cards, mist backgrounds. */
 :root {
-  --background-rgb: 255 255 255;
-  --foreground-rgb: 33 45 41;        /* ink, slightly green */
-  --muted-rgb: 237 241 238;          /* pale sage-grey */
-  --muted-foreground-rgb: 92 104 100;
-  --primary-rgb: 63 117 101;         /* calm sage #3f7565 */
-  --deep-rgb: 44 82 72;              /* band colour #2c5248 */
-  --sage-rgb: 223 234 227;           /* soft sage #dfeae3 */
-  --cream-rgb: 246 242 235;          /* warm cream #f6f2eb */
-  --mist-rgb: 245 248 246;           /* page tint #f5f8f6 */
-  --brand-blue-rgb: 79 121 166;
-  --line-rgb: 226 232 228;
+  /* Warm editorial base (Oura-like cream and charcoal) with a calm sage accent */
+  --background-rgb: 247 242 234;     /* #f7f2ea cream page */
+  --foreground-rgb: 44 42 38;        /* body ink */
+  --muted-rgb: 236 229 218;
+  --muted-foreground-rgb: 110 104 96;
+  --primary-rgb: 63 117 101;         /* sage accent #3f7565 */
+  --deep-rgb: 58 55 50;              /* charcoal #3a3732: headings, buttons */
+  --night-rgb: 29 28 26;             /* #1d1c1a dark panels */
+  --sage-rgb: 222 233 225;           /* soft sage */
+  --cream-rgb: 255 252 247;          /* card */
+  --mist-rgb: 239 232 221;           /* section tint */
+  --brand-blue-rgb: 61 121 184;
+  --line-rgb: 228 220 208;
   --primary: rgb(var(--primary-rgb));
   --brand-blue: rgb(var(--brand-blue-rgb));
   --foreground: rgb(var(--foreground-rgb));
@@ -28,20 +30,21 @@ body {
   background: rgb(var(--background-rgb));
   color: rgb(var(--foreground-rgb));
 }
-h1, h2, h3, h4 { font-weight: 500; line-height: 1.15; letter-spacing: -0.02em; }
-h1 { letter-spacing: -0.03em; }
+h1, h2 { font-family: 'Newsreader', Georgia, serif; font-weight: 300; line-height: 1.05; letter-spacing: -0.025em; }
+h3, h4 { font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; }
 .prose-serif { font-family: inherit; }
 .tnum { font-variant-numeric: tabular-nums; }
 
-.card { @apply bg-white rounded-2xl border border-line; }
-.card-cream { @apply bg-cream rounded-2xl; }
-.eyebrow { @apply text-sm font-medium text-primary; }
+.card { @apply bg-cream rounded-3xl border border-line; }
+.card-cream { @apply bg-mist rounded-3xl; }
+.eyebrow { @apply text-xs font-medium uppercase tracking-[0.14em] text-deep; }
 .btn { @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium transition-colors; }
-.btn-primary { @apply btn bg-primary text-white hover:bg-deep; }
-.btn-ghost { @apply btn bg-white border border-line text-foreground hover:bg-mist; }
-.btn-light { @apply btn bg-white text-deep hover:bg-cream; }
+.btn-primary { @apply btn bg-deep text-cream hover:bg-night; }
+.btn-ghost { @apply btn bg-transparent border border-deep/25 text-deep hover:bg-mist; }
+.btn-light { @apply btn bg-cream text-night hover:bg-white; }
 .chip { @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium; }
-.band { @apply bg-deep text-white rounded-4xl; }
+.band { @apply bg-night text-cream rounded-4xl; }
+.panel-dark { @apply rounded-3xl text-cream; background: radial-gradient(120% 90% at 20% 0%, #2c3a35 0%, #1d1c1a 60%); }
 
 /* Breathing circle (voice step and closing section) */
 @keyframes breathe { 0%,100% { transform: scale(.82) } 50% { transform: scale(1) } }

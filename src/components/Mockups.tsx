@@ -46,16 +46,16 @@ export function FormScreen() {
 
 export function VoiceScreen() {
   return (
-    <div className="px-4 flex-1 flex flex-col items-center text-center">
-      <p className="text-[15px] font-medium text-deep mt-2">Say “aaah”</p>
-      <p className="text-[11px] text-muted-foreground mb-4">As long as feels comfortable</p>
-      <div className="relative w-44 h-44 flex items-center justify-center my-3">
-        <div className="absolute inset-0 rounded-full bg-sage breathe" />
-        <div className="absolute inset-6 rounded-full bg-primary/25 breathe" style={{ animationDelay: '-1.5s' }} />
-        <div className="relative w-20 h-20 rounded-full bg-primary text-white flex items-center justify-center"><Mic size={28} /></div>
+    <div className="flex-1 flex flex-col items-center text-center px-4 -mt-9 pt-12" style={{ background: 'radial-gradient(120% 80% at 30% 0%, #2c3a35 0%, #1d1c1a 65%)' }}>
+      <p className="text-[10px] uppercase tracking-[0.18em] text-cream/60">Voice check</p>
+      <p className="font-serif font-light text-[22px] text-cream mt-1">Say “aaah”</p>
+      <div className="relative w-40 h-40 flex items-center justify-center my-6">
+        <div className="absolute inset-0 rounded-full border border-[#8fc4ad]/30 breathe" />
+        <div className="absolute inset-5 rounded-full bg-[#8fc4ad]/15 breathe" style={{ animationDelay: '-1.5s' }} />
+        <div className="relative w-16 h-16 rounded-full bg-[#8fc4ad] text-night flex items-center justify-center"><Mic size={24} /></div>
       </div>
-      <p className="text-[12px] text-deep font-medium tnum">6.2 s</p>
-      <p className="text-[10px] text-muted-foreground mt-auto mb-5 px-2">Analysed on this phone. Your voice is never uploaded.</p>
+      <p className="font-serif font-light text-3xl text-cream tnum">6.2<span className="text-base text-cream/60"> s</span></p>
+      <p className="text-[10px] text-cream/50 mt-auto mb-5 px-2">Analysed on this phone. Never uploaded.</p>
     </div>
   );
 }

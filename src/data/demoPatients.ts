@@ -1,6 +1,7 @@
 /** Fictional patients for the clinician demo. Voice values are illustrative, on the Praat scale. */
 import type { Answers } from '../engine/questionnaire';
 import type { VoiceFeatures } from '../engine/voice';
+import demoVoices from './generated/demo_voices.json';
 
 export interface DemoPatient {
   id: string;
@@ -13,8 +14,9 @@ export interface DemoPatient {
   completedDaysAgo: number;
 }
 
-const q = { durationS: 6, clippedFraction: 0, snrDb: 38, voicedFraction: 0.86, ok: true, warnings: [] };
-const v = (p: Partial<VoiceFeatures>): VoiceFeatures => ({ f0Mean: 120, f0Sd: 3, jitterLocal: 0.4, shimmerLocal: 2.6, hnrMean: 21, hnrSd: 1.8, cpps: 17.5, cppsRaw: 14.5, jitterRaw: 0.4, shimmerRaw: 2.6, mpt: 18, nPeriods: 700, quality: q, ...p });
+/** Voice data computed by the real engine on synthetic vowels (analysis/node/demo_voices.ts). MPT is illustrative: the source files are 3 s long. */
+const DV = demoVoices as unknown as Record<string, VoiceFeatures>;
+const v = (id: string, mpt: number): VoiceFeatures => ({ ...DV[id], mpt });
 
 export const DEMO_PATIENTS: DemoPatient[] = [
   {
@@ -25,7 +27,7 @@ export const DEMO_PATIENTS: DemoPatient[] = [
     symptomOnsetDaysAgo: 58,
     completedDaysAgo: 2,
     answers: { age: 67, sex: 'm', heightCm: 178, weightKg: 81, smoking: 'former', cigsPerDay: 20, yearsSmoked: 35, yearsSinceQuit: 6, education: 2, symptoms: { hoarseness: 'gt6w', cough: '3to6w' }, vhi10: [2, 2, 1, 1, 0, 3, 3, 2, 1, 3], eq5d: { mobility: 1, selfcare: 1, activities: 2, pain: 2, anxiety: 2 }, eqVas: 70, freeText: 'Ääni on ollut käheä jo pari kuukautta eikä parane. Joskus kurkkuun sattuu nielaistessa.' },
-    voice: v({ f0Mean: 118, cpps: 11.2, hnrMean: 12.4, hnrSd: 4.6, jitterLocal: 1.62, shimmerLocal: 6.1, mpt: 11.5 }),
+    voice: v('p1', 11.5),
   },
   {
     id: 'p2',
@@ -35,7 +37,7 @@ export const DEMO_PATIENTS: DemoPatient[] = [
     symptomOnsetDaysAgo: 49,
     completedDaysAgo: 1,
     answers: { age: 64, sex: 'm', heightCm: 175, weightKg: 70, smoking: 'current', cigsPerDay: 20, yearsSmoked: 45, education: 2, copd: true, symptoms: { cough: 'gt6w', fatigue: '3to6w', weightLoss: '3to6w', sob: '3to6w' }, eq5d: { mobility: 2, selfcare: 1, activities: 2, pain: 1, anxiety: 2 }, eqVas: 60, freeText: 'Yskä ei ole mennyt ohi flunssan jälkeen ja paino on pudonnut noin 4 kiloa.' },
-    voice: v({ f0Mean: 112, cpps: 15.6, hnrMean: 18.2, mpt: 8.4 }),
+    voice: v('p2', 8.4),
   },
   {
     id: 'p3',
@@ -54,7 +56,7 @@ export const DEMO_PATIENTS: DemoPatient[] = [
     symptomOnsetDaysAgo: 70,
     completedDaysAgo: 4,
     answers: { age: 78, sex: 'f', heightCm: 160, weightKg: 49, smoking: 'never', symptoms: { fatigue: 'gt6w', appetiteLoss: '3to6w' }, g8: { food: 1, weight: 2, mobility: 2, neuro: 2, meds: 0, selfHealth: 0.5 }, eq5d: { mobility: 2, selfcare: 2, activities: 3, pain: 2, anxiety: 2 }, eqVas: 55, freeText: 'I just feel tired all the time and food does not taste like before.' },
-    voice: v({ f0Mean: 196, cpps: 15.1, hnrMean: 19.5, mpt: 12.1 }),
+    voice: v('p4', 12.1),
   },
   {
     id: 'p5',
