@@ -14,7 +14,7 @@ The GP gets a sorted list, a ready-written history and a suggested next step.
 [Try it yourself](https://latt33.github.io/SEULA/#/check) · [Doctor's view](https://latt33.github.io/SEULA/#/clinician) · [For regions](https://latt33.github.io/SEULA/#/region) · [Evidence](https://latt33.github.io/SEULA/#/evidence)
 
 Junction 2026 · AstraZeneca challenge: *equitable and effective cancer care in Finland*<br>
-Built on [PUHELU](https://github.com/Latt33/PUHELU). *Seula* is Finnish for *sieve*.
+Built from scratch on the same principle as [PUHELU](https://github.com/Latt33/PUHELU). *Seula* is Finnish for *sieve*.
 
 </div>
 
