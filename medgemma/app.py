@@ -70,7 +70,7 @@ def _boxes(text: str):
 
 
 @app.cls(gpu=["L4", "A10G", "L40S", "A100-40GB"], image=image, volumes={"/root/.cache/huggingface": cache},
-         secrets=[modal.Secret.from_name("huggingface")], scaledown_window=900, timeout=600)
+         secrets=[modal.Secret.from_name("huggingface")], scaledown_window=900, timeout=900)
 class MedGemma:
     @modal.enter()
     def load(self):
@@ -118,7 +118,7 @@ class MedGemma:
         }
 
 
-@app.function(image=image)
+@app.function(image=image, timeout=900)
 @modal.asgi_app()
 def web():
     from fastapi import FastAPI
