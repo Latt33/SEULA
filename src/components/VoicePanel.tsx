@@ -4,27 +4,36 @@ import { Mic } from 'lucide-react';
 import { fromBase64, Spectrogram as Spec, VOICE_REFERENCES, VoiceFeatures } from '../engine/voice';
 import { Cite } from './ui';
 
+type Stops = [number, [number, number, number]][];
+/** Light theme: single-hue sage ramp on the cream card, pale = quiet, dark = loud. */
+const LIGHT: Stops = [
+  [0, [255, 252, 247]],
+  [0.35, [214, 230, 220]],
+  [0.65, [120, 168, 148]],
+  [0.85, [63, 117, 101]],
+  [1, [31, 64, 54]],
+];
 /** Single-hue sage ramp on a dark ground: dark = quiet, bright = loud. */
-const STOPS: [number, [number, number, number]][] = [
+const STOPS: Stops = [
   [0, [29, 28, 26]],
   [0.35, [36, 64, 55]],
   [0.6, [63, 117, 101]],
   [0.82, [143, 196, 173]],
   [1, [236, 247, 240]],
 ];
-function colour(v: number): [number, number, number] {
-  for (let i = 1; i < STOPS.length; i++) {
-    if (v <= STOPS[i][0]) {
-      const [a, ca] = STOPS[i - 1];
-      const [b, cb] = STOPS[i];
+function colour(v: number, stops: Stops = STOPS): [number, number, number] {
+  for (let i = 1; i < stops.length; i++) {
+    if (v <= stops[i][0]) {
+      const [a, ca] = stops[i - 1];
+      const [b, cb] = stops[i];
       const t = (v - a) / (b - a);
       return [0, 1, 2].map((k) => Math.round(ca[k] + (cb[k] - ca[k]) * t)) as [number, number, number];
     }
   }
-  return STOPS[STOPS.length - 1][1];
+  return stops[stops.length - 1][1];
 }
 
-export function SpectrogramCanvas({ spec, height = 180 }: { spec: Spec; height?: number }) {
+export function SpectrogramCanvas({ spec, height = 180, light = false }: { spec: Spec; height?: number; light?: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const c = ref.current;
@@ -38,28 +47,28 @@ export function SpectrogramCanvas({ spec, height = 180 }: { spec: Spec; height?:
     for (let t = 0; t < spec.w; t++) {
       for (let f = 0; f < spec.h; f++) {
         const v = data[t * spec.h + f] / 255;
-        const [r, g, b] = colour(v * v); // gamma for contrast
+        const [r, g, b] = colour(v * v, light ? LIGHT : STOPS); // gamma for contrast
         const o = ((spec.h - 1 - f) * spec.w + t) * 4;
         img.data[o] = r;
         img.data[o + 1] = g;
         img.data[o + 2] = b;
-        img.data[o + 3] = Math.round(255 * Math.min(1, v * 3)); // silence fades into the panel
+        img.data[o + 3] = light ? 255 : Math.round(255 * Math.min(1, v * 3)); // silence fades into the panel
       }
     }
     ctx.putImageData(img, 0, 0);
-  }, [spec]);
+  }, [spec, light]);
   const kHz = Array.from({ length: Math.floor(spec.maxHz / 500) + 1 }, (_, i) => i * 0.5);
   const secs = Array.from({ length: Math.floor(spec.durationS) + 1 }, (_, i) => i);
   return (
     <div className="flex gap-2">
-      <div className="relative w-8 text-xs text-cream/50 tnum" style={{ height }}>
+      <div className={`relative w-8 text-xs tnum ${light ? 'text-muted-foreground' : 'text-cream/50'}`} style={{ height }}>
         {kHz.map((k) => (
           <span key={k} className="absolute right-0 -translate-y-1/2" style={{ top: `${(1 - (k * 1000) / spec.maxHz) * 100}%` }}>{k}k</span>
         ))}
       </div>
       <div className="flex-1 min-w-0">
         <canvas ref={ref} className="w-full rounded-xl" style={{ height, imageRendering: 'auto' }} aria-label="Voice spectrogram" />
-        <div className="relative h-4 text-xs text-cream/50 tnum mt-1">
+        <div className={`relative h-4 text-xs tnum mt-1 ${light ? 'text-muted-foreground' : 'text-cream/50'}`}>
           {secs.map((s) => (
             <span key={s} className="absolute -translate-x-1/2" style={{ left: `${(s / spec.durationS) * 100}%` }}>{s}s</span>
           ))}
@@ -117,6 +126,45 @@ export function VoicePanel({ voice, reference, referenceLabel }: { voice: VoiceF
         <p className="text-cream/60">No spectrogram for this recording.</p>
       )}
       <p className="text-sm text-cream/50 mt-5">Voice never raises urgency on its own. <Cite k="murton2020"><span className="text-cream/60">Reference</span></Cite> · <Link to="/evidence" className="underline">How we checked it</Link></p>
+    </div>
+  );
+}
+
+function LightRing({ value, label, frac, ok }: { value: string; label: string; frac: number; ok: boolean }) {
+  const r = 26;
+  const C = 2 * Math.PI * r;
+  return (
+    <div className="flex flex-col items-center text-center">
+      <svg width="66" height="66" viewBox="0 0 66 66">
+        <circle cx="33" cy="33" r={r} fill="none" stroke="rgb(var(--muted-rgb))" strokeWidth="4" />
+        <circle cx="33" cy="33" r={r} fill="none" stroke={ok ? 'rgb(var(--primary-rgb))' : '#a8483f'} strokeWidth="4" strokeLinecap="round" strokeDasharray={`${Math.max(0.02, Math.min(1, frac)) * C} ${C}`} transform="rotate(-90 33 33)" />
+        <text x="33" y="38" textAnchor="middle" fontSize="15" fill="rgb(var(--deep-rgb))" style={{ fontFamily: "'DM Sans', sans-serif" }}>{value}</text>
+      </svg>
+      <span className="text-[15px] text-deep mt-1">{label}</span>
+      <span className={`text-sm ${ok ? 'text-muted-foreground' : 'text-[#a8483f]'}`}>{ok ? 'Typical' : 'Check'}</span>
+    </div>
+  );
+}
+
+/** Light, compact voice card for the doctor's view: supporting evidence, not the headline. */
+export function VoiceCard({ voice }: { voice: VoiceFeatures }) {
+  const cppsOk = voice.cpps > VOICE_REFERENCES.cpps.threshold;
+  const jitOk = voice.jitterLocal <= VOICE_REFERENCES.jitterLocal.threshold;
+  const shimOk = voice.shimmerLocal <= VOICE_REFERENCES.shimmerLocal.threshold;
+  return (
+    <div className="card p-6">
+      <div className="flex items-baseline justify-between mb-5">
+        <h3 className="text-lg text-deep flex items-center gap-2"><Mic size={18} className="text-primary" /> Voice</h3>
+        <span className={`text-[15px] ${cppsOk ? 'text-muted-foreground' : 'text-[#a8483f]'}`}>{cppsOk ? 'Steady' : 'Strained'}</span>
+      </div>
+      <div className="grid grid-cols-4 gap-1 mb-5">
+        <LightRing value={voice.cpps.toFixed(1)} label="Clarity" frac={voice.cpps / 22} ok={cppsOk} />
+        <LightRing value={voice.jitterLocal.toFixed(1)} label="Pitch" frac={1 - Math.min(1, voice.jitterLocal / 3)} ok={jitOk} />
+        <LightRing value={voice.shimmerLocal.toFixed(1)} label="Loudness" frac={1 - Math.min(1, voice.shimmerLocal / 15)} ok={shimOk} />
+        <LightRing value={voice.mpt.toFixed(0)} label="Breath" frac={Math.min(1, voice.mpt / 20)} ok={voice.mpt >= 10} />
+      </div>
+      {voice.spectrogram && <SpectrogramCanvas spec={voice.spectrogram} height={120} light />}
+      <p className="text-[15px] text-muted-foreground mt-3">Sharp lines mean a steady voice; haze means strain. Voice never raises urgency on its own. <Link to="/evidence" className="underline">How we checked it</Link></p>
     </div>
   );
 }
