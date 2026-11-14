@@ -18,7 +18,22 @@ export function Pilot() {
         Each action has an owner, a deadline and a measure. None needs new hardware or new staff. R1 to R4 deliver value from month one; R5 and R6 turn it into evidence and into Goal 3 indicators.
       </PageHeader>
 
-      <div className="card overflow-x-auto mb-10">
+      <div className="md:hidden space-y-4 mb-10">
+        {RECS.map((r) => (
+          <div key={r.id} className="card p-5">
+            <div className="flex gap-3 items-baseline mb-3"><span className="font-display text-primary text-lg">{r.id}</span><p className="font-medium">{r.what}</p></div>
+            <dl className="grid grid-cols-[96px_1fr] gap-x-3 gap-y-1.5 text-sm">
+              <dt className="text-muted-foreground">Owner</dt><dd>{r.owner}</dd>
+              <dt className="text-muted-foreground">When</dt><dd className="tnum">{r.when}</dd>
+              <dt className="text-muted-foreground">Success</dt><dd>{r.kpi}</dd>
+              <dt className="text-muted-foreground">Goal 3</dt><dd className="tnum">{r.goal}</dd>
+              <dt className="text-muted-foreground">Cost</dt><dd>{r.cost}</dd>
+            </dl>
+          </div>
+        ))}
+      </div>
+
+      <div className="card overflow-x-auto mb-10 hidden md:block">
         <table className="w-full text-sm min-w-[860px]">
           <thead>
             <tr className="text-left text-muted-foreground border-b border-line bg-background/60">
@@ -42,7 +57,7 @@ export function Pilot() {
       </div>
 
       <h2 className="text-2xl mb-4">90-day pilot</h2>
-      <div className="grid md:grid-cols-3 gap-4 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         {[
           ['Weeks 0–4 · Set up', ['Choose 2 health stations in North Karelia (32.1% underserved) and a comparator', 'Data protection impact assessment; clinical safety owner named', 'Local NG12-based standing orders signed (R2, R3)', 'Copy-paste mode: no EHR integration needed to start']],
           ['Weeks 5–8 · Live', ['Link added to booking SMS for adults 40+ (R1)', 'GPs see the pre-triaged list; nurses book flagged tests', 'Weekly huddle: false flags, missed flags, GP feedback', 'Phone fallback: a nurse reads the same questions']],
@@ -55,7 +70,7 @@ export function Pilot() {
         ))}
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         <div className="card p-5">
           <Workflow className="text-primary mb-2" size={20} />
           <p className="font-semibold mb-2">Integration in three steps</p>

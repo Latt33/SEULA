@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, BellRing } from 'lucide-react';
 import { Cite, Page } from '../components/ui';
@@ -22,7 +22,7 @@ export function Region() {
       </div>
 
       {/* 1. Where */}
-      <div className="grid lg:grid-cols-[1.4fr_1fr] gap-6 mb-20">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 mb-20">
         <div className="card p-7">
           <p className="text-lg text-deep mb-1">People who feel they get too little doctor time</p>
           <p className="text-sm text-muted-foreground mb-6">Share of residents, 2024 · <Cite k="terveSuomi" /></p>
@@ -61,7 +61,7 @@ export function Region() {
       {/* 2. What to do */}
       <h2 className="text-3xl md:text-4xl text-deep mb-3">Six steps for the next quarter</h2>
       <p className="text-lg text-muted-foreground mb-8 max-w-2xl">Each step has an owner and a way to measure it. None needs new hardware or new staff.</p>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-20">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-20">
         {RECS.map((r, i) => (
           <div key={r.id} className="card p-6 flex flex-col">
             <span className="w-8 h-8 rounded-full bg-sage text-deep flex items-center justify-center font-medium mb-4">{i + 1}</span>
@@ -77,7 +77,7 @@ export function Region() {
       <div className="band p-8 md:p-12 mb-20">
         <h2 className="text-3xl md:text-4xl mb-3">A pilot region, in numbers</h2>
         <p className="text-white/75 text-lg mb-10 max-w-2xl">40,000 forms a year. Saving doctors 2 minutes per visit on history-taking pays for the system and the extra tests.</p>
-        <div className="grid sm:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           {[
             [Math.round(pilot.physicianHours).toLocaleString('en-US'), 'doctor hours freed each year'],
             [Math.round(pilot.flagged).toLocaleString('en-US'), 'people sent for a test within 2 weeks'],
@@ -100,26 +100,40 @@ export function Region() {
   );
 }
 
+function useNarrow() {
+  const q = '(max-width: 640px)';
+  const [n, setN] = useState(() => typeof window !== 'undefined' && window.matchMedia(q).matches);
+  useEffect(() => {
+    const m = window.matchMedia(q);
+    const f = () => setN(m.matches);
+    m.addEventListener('change', f);
+    return () => m.removeEventListener('change', f);
+  }, []);
+  return n;
+}
+
 function EarlyWarning() {
   const series = [
     { name: 'Station A', color: '#3d79b8', v: [18, 17, 19, 18, 16, 17, 18, 17, 16, 17, 18, 17] },
     { name: 'Station B', color: '#c4843f', v: [21, 22, 20, 21, 22, 21, 20, 22, 21, 20, 21, 22] },
     { name: 'Station C', color: '#1f8a62', v: [19, 20, 19, 21, 22, 24, 27, 29, 31, 33, 34, 36] },
   ];
-  const W = 640;
-  const H = 230;
-  const pad = { l: 36, r: 80, t: 12, b: 28 };
+  const narrow = useNarrow();
+  const W = narrow ? 360 : 640;
+  const H = narrow ? 250 : 230;
+  const pad = { l: 30, r: narrow ? 58 : 80, t: 12, b: 28 };
+  const label = (n: string) => (narrow ? n.replace('Station ', 'Stn ') : n);
   const x = (w: number) => pad.l + ((w - 1) / 11) * (W - pad.l - pad.r);
   const y = (d: number) => pad.t + (1 - (d - 10) / 30) * (H - pad.t - pad.b);
   const [hw, setHw] = useState<number | null>(null);
   return (
-    <div className="grid lg:grid-cols-[1.5fr_1fr] gap-6">
-      <div className="card p-6 overflow-x-auto">
+    <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6">
+      <div className="card p-5 sm:p-6">
         <div className="flex justify-between items-start mb-2 gap-3">
           <p className="text-deep">Days from first symptom to doctor, by health station</p>
           <span className="chip bg-cream text-[#8f6420] shrink-0">Example data</span>
         </div>
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full min-w-[500px]" onMouseLeave={() => setHw(null)}>
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full" onMouseLeave={() => setHw(null)}>
           {[10, 20, 30, 40].map((d) => (
             <g key={d}>
               <line x1={pad.l} x2={W - pad.r} y1={y(d)} y2={y(d)} stroke="#e2e8e4" />
@@ -130,20 +144,20 @@ function EarlyWarning() {
           <text x={W - pad.r + 4} y={y(28) + 3} fontSize="10" fill="#a8483f">alert</text>
           {Array.from({ length: 12 }, (_, i) => i + 1).map((w) => (
             <g key={w}>
-              <text x={x(w)} y={H - 8} fontSize="10" textAnchor="middle" fill="#5c6864">wk {w}</text>
-              <rect x={x(w) - 20} y={pad.t} width={40} height={H - pad.t - pad.b} fill="transparent" onMouseEnter={() => setHw(w)} />
+              {(!narrow || w % 3 === 1) && <text x={x(w)} y={H - 8} fontSize="10" textAnchor="middle" fill="#5c6864">wk {w}</text>}
+              <rect x={x(w) - (W - pad.l - pad.r) / 22} y={pad.t} width={(W - pad.l - pad.r) / 11} height={H - pad.t - pad.b} fill="transparent" onMouseEnter={() => setHw(w)} onClick={() => setHw(w)} />
             </g>
           ))}
           {hw && <line x1={x(hw)} x2={x(hw)} y1={pad.t} y2={H - pad.b} stroke="#212d29" strokeOpacity=".2" />}
           {series.map((s) => (
             <g key={s.name}>
               <polyline fill="none" stroke={s.color} strokeWidth="2" points={s.v.map((d, i) => `${x(i + 1)},${y(d)}`).join(' ')} />
-              <text x={W - pad.r + 4} y={y(s.v[11]) + 3} fontSize="11" fill="#212d29">{s.name}</text>
+              <text x={W - pad.r + 4} y={y(s.v[11]) + 3} fontSize="11" fill="#212d29">{label(s.name)}</text>
               {hw && <circle cx={x(hw)} cy={y(s.v[hw - 1])} r="4" fill={s.color} stroke="white" strokeWidth="2" />}
             </g>
           ))}
         </svg>
-        <p className="text-sm text-muted-foreground h-4">{hw ? `Week ${hw}: ${series.map((s) => `${s.name} ${s.v[hw - 1]} days`).join(' · ')}` : 'Hover to compare stations'}</p>
+        <p className="text-sm text-muted-foreground min-h-[2.5rem] sm:min-h-0">{hw ? `Week ${hw}: ${series.map((s) => `${s.name} ${s.v[hw - 1]} days`).join(' · ')}` : 'Tap or hover to compare stations'}</p>
       </div>
       <div className="card-cream p-7">
         <p className="text-lg text-deep mb-2">Station C needs attention</p>

@@ -49,12 +49,12 @@ export function Evidence() {
 
       <Claim n={2} title="The phone measures voice the way the clinical reference tool does" ok>
         <p className="text-sm text-muted-foreground mb-4">We synthesised {V.synthetic.n} sustained /a/ vowels with controlled jitter, shimmer and breath noise (a source-filter model), then measured each with Praat {V.praatVersion} and with SEULA’s browser engine (the identical TypeScript that runs on the phone). Calibrated measures are reported on a held-out half.</p>
-        <div className="grid md:grid-cols-[1fr_1.1fr] gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr] gap-5">
           <table className="w-full text-sm h-fit">
-            <thead><tr className="text-left text-muted-foreground border-b border-line"><th className="py-2 font-medium">Measure</th><th className="font-medium text-right">r</th><th className="font-medium text-right">bias</th><th className="font-medium text-right">MAE</th></tr></thead>
+            <thead><tr className="text-left text-muted-foreground border-b border-line"><th className="py-2 font-medium">Measure</th><th className="font-medium text-right">r</th><th className="font-medium text-right hidden sm:table-cell">bias</th><th className="font-medium text-right">MAE</th></tr></thead>
             <tbody className="divide-y divide-line">
               {Object.entries(V.synthetic.features).map(([k, f]) => (
-                <tr key={k}><td className="py-2">{FEAT_LABEL[k]?.[0] ?? k}{f.heldOut && <span className="chip bg-muted/60 ml-1">held-out</span>}</td><td className="text-right tnum font-semibold">{f.r.toFixed(3)}</td><td className="text-right tnum">{f.bias.toFixed(2)}</td><td className="text-right tnum">{f.mae.toFixed(2)} {FEAT_LABEL[k]?.[1]}</td></tr>
+                <tr key={k}><td className="py-2">{FEAT_LABEL[k]?.[0] ?? k}{f.heldOut && <span className="chip bg-muted/60 ml-1">held-out</span>}</td><td className="text-right tnum font-semibold">{f.r.toFixed(3)}</td><td className="text-right tnum hidden sm:table-cell">{f.bias.toFixed(2)}</td><td className="text-right tnum whitespace-nowrap">{f.mae.toFixed(2)} {FEAT_LABEL[k]?.[1]}</td></tr>
               ))}
             </tbody>
           </table>
@@ -81,7 +81,7 @@ export function Evidence() {
       </Claim>
 
       <Claim n={4} title="Free text and dictation surface red flags patients forget to tick" ok>
-        <div className="grid sm:grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <Metric v={TE.heldOut.precision} l="precision, held-out" />
           <Metric v={TE.heldOut.recall} l="recall, held-out" />
           <Metric v={TE.development.f1} l="F1 on development set" muted />
@@ -112,8 +112,8 @@ export function Evidence() {
 
 function Claim({ n, title, ok, children }: { n: number; title: string; ok: boolean; children: React.ReactNode }) {
   return (
-    <section className="card p-7 mb-6">
-      <h2 className="text-2xl text-deep mb-5 flex items-center gap-3">
+    <section className="card p-5 sm:p-7 mb-6">
+      <h2 className="text-xl sm:text-2xl text-deep mb-5 flex items-start sm:items-center gap-3">
         <span className="w-8 h-8 rounded-full bg-sage text-deep flex items-center justify-center text-base font-medium shrink-0">{n}</span>
         <span className="flex-1">{title}</span>
         {ok ? <CheckCircle2 className="text-primary shrink-0" size={20} /> : <CircleAlert className="text-[#c4843f] shrink-0" size={20} />}
@@ -147,25 +147,25 @@ function AucExplorer() {
   return (
     <div>
       <p className="text-sm text-muted-foreground mb-4">If questionnaire and voice each separate cases from non-cases, how much does combining them help? With both signals Gaussian, the best linear combination has a closed form: AUC = Φ(D/√2), where D is the Mahalanobis distance between groups. The x-axis is how strongly voice differs between groups (effect size d). Published anchors are marked.</p>
-      <div className="grid md:grid-cols-2 gap-4 mb-3 text-sm">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3 text-sm">
         <label>Questionnaire alone, AUC <b className="tnum">{qAuc.toFixed(2)}</b><input type="range" min={0.55} max={0.95} step={0.01} value={qAuc} onChange={(e) => setQAuc(+e.target.value)} className="w-full" /></label>
         <label>Correlation between the two signals within each group <b className="tnum">{rho.toFixed(2)}</b><input type="range" min={0} max={0.9} step={0.05} value={rho} onChange={(e) => setRho(+e.target.value)} className="w-full" /></label>
       </div>
-      <ResponsiveContainer width="100%" height={260}>
-        <LineChart data={data} margin={{ top: 10, right: 16, bottom: 20, left: 0 }}>
+      <ResponsiveContainer width="100%" height={280}>
+        <LineChart data={data} margin={{ top: 22, right: 16, bottom: 20, left: 0 }}>
           <CartesianGrid stroke="#e2e8e4" />
           <XAxis dataKey="d" type="number" domain={[0, 2.5]} ticks={[0, 0.5, 1, 1.5, 2, 2.5]} tick={{ fontSize: 11 }} label={{ value: 'Voice effect size d', position: 'insideBottom', offset: -10, fontSize: 11 }} />
           <YAxis domain={[0.5, 1]} ticks={[0.5, 0.6, 0.7, 0.8, 0.9, 1]} tick={{ fontSize: 11 }} width={40} />
           <Tooltip formatter={(v) => Number(v).toFixed(3)} labelFormatter={(d) => `d = ${d}`} />
-          <Legend verticalAlign="top" height={28} iconType="plainline" />
-          <ReferenceLine x={0} stroke="#5c6864" strokeDasharray="4 3" label={{ value: 'cancer vs benign lesion', position: 'insideTopLeft', fontSize: 10, fill: '#6b6560' }} />
-          <ReferenceLine x={+dDys.toFixed(2)} stroke="#5c6864" strokeDasharray="4 3" label={{ value: 'dysphonia vs normal', position: 'insideTopRight', fontSize: 10, fill: '#6b6560' }} />
+          <Legend verticalAlign="bottom" height={36} iconType="plainline" wrapperStyle={{ fontSize: 12, paddingTop: 16 }} />
+          <ReferenceLine x={0} stroke="#5c6864" strokeDasharray="4 3" label={{ value: 'cancer vs benign', position: 'top', fontSize: 10, fill: '#6b6560' }} />
+          <ReferenceLine x={+dDys.toFixed(2)} stroke="#5c6864" strokeDasharray="4 3" label={{ value: 'dysphonia', position: 'top', fontSize: 10, fill: '#6b6560' }} />
           <Line dataKey="Questionnaire" stroke="#c4843f" strokeWidth={2} dot={false} />
           <Line dataKey="Voice" stroke="#3d79b8" strokeWidth={2} dot={false} />
           <Line dataKey="Combined" stroke="#1f8a62" strokeWidth={2} dot={false} />
         </LineChart>
       </ResponsiveContainer>
-      <div className="grid md:grid-cols-2 gap-4 text-sm mt-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-2">
         <div className="rounded-2xl bg-mist p-5">
           <p className="font-semibold mb-1">Abnormal vs normal larynx: d ≈ {dDys.toFixed(1)}</p>
           <p className="text-muted-foreground">CPPS separates dysphonic from normal voices with AUC 0.93 <Cite k="murton2020" />. Combined with the questionnaire, AUC reaches {combinedAuc(dQ, dDys, rho).toFixed(2)}. That is the job SEULA gives voice: who needs a laryngoscopy.</p>

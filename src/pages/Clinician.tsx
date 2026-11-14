@@ -34,7 +34,7 @@ export function Clinician() {
         <p className="text-xl text-muted-foreground">{needTest} of {rows.length} patients need a test within two weeks. The most urgent are at the top.</p>
       </div>
 
-      <div className="grid lg:grid-cols-[300px_1fr] gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
         <aside className="card p-2 h-fit lg:sticky lg:top-24">
           {rows.map((x) => (
             <button key={x.id} onClick={() => setSel(x.id)} className={`w-full text-left px-4 py-3 rounded-2xl flex gap-3 items-center transition-colors ${sel === x.id ? 'bg-mist' : 'hover:bg-mist/60'}`}>
@@ -80,7 +80,7 @@ function Packet({ p }: { p: Row }) {
           </div>
           {main ? (
             <>
-              <p className="text-3xl md:text-[2rem] leading-tight text-deep font-medium mb-2">{main.action}</p>
+              <p className="text-2xl md:text-[2rem] leading-tight text-deep font-medium mb-2">{main.action}</p>
               {others.length > 0 && (
                 <ul className="text-lg text-deep/80 space-y-1">
                   {others.map((f) => <li key={f.id}>Also: {f.action.charAt(0).toLowerCase() + f.action.slice(1)}</li>)}
@@ -108,7 +108,7 @@ function Packet({ p }: { p: Row }) {
       </div>
 
       {/* 3: supporting evidence */}
-      <div className={`grid gap-6 ${voice ? 'xl:grid-cols-[1.15fr_1fr]' : ''}`}>
+      <div className={`grid grid-cols-1 gap-6 ${voice ? 'xl:grid-cols-[1.15fr_1fr]' : ''}`}>
         {voice && <VoiceCard voice={voice} />}
         <div className="card p-6 space-y-6">
           <h3 className="text-lg text-deep">Scores</h3>
@@ -174,7 +174,7 @@ function Notes({ p }: { p: Row }) {
   return (
     <div className="card">
       <div className="flex flex-wrap items-center gap-3 p-5">
-        <button onClick={copy} className="btn-primary py-2.5 px-5"><ClipboardCopy size={17} /> {copied ? 'Copied' : 'Copy history to patient record'}</button>
+        <button onClick={copy} className="btn-primary py-2.5 px-5"><ClipboardCopy size={17} /> {copied ? 'Copied' : <><span className="sm:hidden">Copy to record</span><span className="hidden sm:inline">Copy history to patient record</span></>}</button>
         <button onClick={() => setOpen(!open)} className="btn-ghost py-2.5 px-5">{open ? 'Hide' : 'Preview'} <ChevronDown size={16} className={open ? 'rotate-180' : ''} /></button>
         <button onClick={fhir} className="text-[15px] text-muted-foreground hover:text-deep inline-flex items-center gap-1.5 ml-auto"><FileJson size={16} /> FHIR</button>
       </div>

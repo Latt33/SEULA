@@ -72,9 +72,9 @@ export function Cite({ k, children }: { k: string; children?: ReactNode }) {
   const s = SOURCES[k];
   if (!s) return null;
   return (
-    <a href={s.url} target="_blank" rel="noopener noreferrer" title={s.label} className="text-sm text-muted-foreground underline decoration-dotted underline-offset-2 hover:text-deep inline-flex items-center gap-0.5">
+    <a href={s.url} target="_blank" rel="noopener noreferrer" title={s.label} className="text-sm text-muted-foreground underline decoration-dotted underline-offset-2 hover:text-deep">
       {children ?? s.label}
-      <ArrowUpRight size={11} />
+      <ArrowUpRight size={11} className="inline align-baseline ml-0.5" />
     </a>
   );
 }

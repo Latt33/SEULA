@@ -52,7 +52,7 @@ export function Landing() {
       <section className="py-28 md:py-36 px-5">
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="text-4xl md:text-5xl text-deep mb-16">In Finland, cancer is often found late</h2>
-          <div className="grid md:grid-cols-3 gap-12 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
             {[
               ['16.7%', 'of men with lung cancer alive after 5 years. Sweden: 26.8%.', 'nordicLung'],
               ['1 in 4', 'feel they don’t get enough doctor time.', 'terveSuomi'],
@@ -72,7 +72,7 @@ export function Landing() {
       <section className="pb-24 px-5">
         <div className="mx-auto max-w-6xl">
           <h2 className="text-4xl md:text-5xl text-deep text-center mb-16">How it works</h2>
-          <div className="grid md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <Moment pill="At home" icon={<ClipboardList size={14} />} title="Answer a few questions" text="Linked from your booking text message.">
               <div className="scale-[0.82] origin-top"><Phone><FormScreen /></Phone></div>
             </Moment>
@@ -121,7 +121,7 @@ export function Landing() {
       <section className="py-24 md:py-28 px-5">
         <div className="mx-auto max-w-5xl">
           <h2 className="text-4xl md:text-5xl text-deep text-center mb-14">The same visit, better prepared</h2>
-          <div className="grid md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="card-cream p-8">
               <p className="text-xl font-medium mb-6 text-muted-foreground">Today</p>
               <ul className="space-y-4">{TODAY.map((t) => <li key={t} className="flex gap-3 text-lg text-muted-foreground"><Minus size={18} className="shrink-0 mt-0.5" />{t}</li>)}</ul>

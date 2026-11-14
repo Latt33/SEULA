@@ -28,7 +28,7 @@ export function Impact() {
         <button onClick={() => setP(DEFAULTS)} className="btn-ghost py-1.5 px-3 text-sm"><RotateCcw size={14} /> Base case</button>
       </div>
 
-      <div className="grid lg:grid-cols-[1fr_1.1fr] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-6">
         <div className="card p-5 space-y-5 h-fit">
           {PARAMS.map((m) => (
             <div key={m.key}>
