@@ -1,86 +1,156 @@
+<div align="center">
+
+<img src="docs/hero.png" alt="SEULA: a 4-minute pre-visit check on the patient's phone" width="860">
+
 # SEULA
 
-**The appointment form that finds cancer earlier.**
-Junction 2026 · AstraZeneca challenge: *equitable and effective cancer care in Finland*. Built on [PUHELU](https://github.com/Latt33/PUHELU).
+**Spot the signs of cancer at the first visit.**
 
-SEULA (Finnish for *sieve*) is a 4-minute pre-visit questionnaire with a 30-second voice test. The patient completes it on their own phone from the link in the booking SMS they already receive. The GP gets:
+A 4-minute pre-visit check on the patient's own phone: symptom questions plus a 3-second voice test.<br>
+The GP gets a sorted list, a ready-written history and a suggested next step.
 
-- a pre-triaged list,
-- a structured history ready to paste into the EHR,
-- a suggested next step (chest X-ray, FIT, laryngoscopy),
-- a referral attachment carrying G8 and EQ-5D-5L.
+### [Open the live demo &rarr;](https://latt33.github.io/SEULA/)
 
-## The gap SEULA targets
+[Try it yourself](https://latt33.github.io/SEULA/#/check) · [Doctor's view](https://latt33.github.io/SEULA/#/clinician) · [For regions](https://latt33.github.io/SEULA/#/region) · [Evidence](https://latt33.github.io/SEULA/#/evidence)
 
-| Where on the pathway | Evidence |
+Junction 2026 · AstraZeneca challenge: *equitable and effective cancer care in Finland*<br>
+Built on [PUHELU](https://github.com/Latt33/PUHELU). *Seula* is Finnish for *sieve*.
+
+</div>
+
+---
+
+> **Ready to use as it is.** SEULA is a static web page. A county puts the link in the booking text message it already sends, and the GP pastes the finished history into any patient record system. No app to install, no new hardware, no integration needed on day one. When the county wants integration, the FHIR R4 output is already there.
+
+---
+
+## The problem
+
+In Finland, cancer is often found late, and how late depends on where you live.
+
+| | |
 |---|---|
-| Primary-care access | 19.3–32.1% of residents per county feel they get too few doctor services (THL Terve Suomi 2024) |
-| Detection → referral | Only 27% of lung cancer patients reach curative treatment (quality registry report 2019–2023) |
-| Diagnosis | Stage recorded for 42% of cancers nationally (Finnish Cancer Registry, Syöpä 2024) |
-| Outcome | 5-yr lung cancer survival 16.7% in Finnish men vs 26.8% Sweden, 28.2% Norway (Acta Oncol 2025) |
+| **16.7%** | of Finnish men with lung cancer are alive after 5 years. Sweden: 26.8% (Acta Oncol 2025) |
+| **27%** | of lung cancer patients get treatment that aims to cure (quality registry 2019–2023) |
+| **19.3–32.1%** | of residents, depending on the region, feel they get too little doctor time (THL Terve Suomi 2024) |
+| **61%** | of lung cancer delay happens before the patient even sees a GP (Kotecha, BJGP Open 2021) |
 
-Every number in the app links to its source (`src/data/sources.ts`).
+The warning signs are there at the first visit. They get lost because the visit is short, the history is taken from scratch and the signs depend on what the patient remembers to mention.
 
-## What is in the box
+## What SEULA does
 
-| Path | What |
+1. **At home.** The patient opens the link from their booking SMS and answers short, validated symptom questions in Finnish or English.
+2. **Three seconds of "aaah".** The phone measures how steady the voice is. The audio is analysed on the phone and never uploaded.
+3. **At the visit.** The GP sees a list sorted by urgency, the reasons behind each flag with the guideline that triggered it, a suggested next step (chest X-ray, FIT, laryngoscopy) and a history to paste straight into the record.
+
+The region gets a dashboard of days from first symptom to doctor, per health station, so a growing delay shows up within weeks instead of in next year's statistics.
+
+## What is new
+
+- **Voice before the first visit.** Hoarseness is often the first sign of glottic cancer, the most common laryngeal cancer. Voice clarity (CPPS) is the best-validated acoustic measure of it, but today it is measured in voice labs after referral. SEULA takes the same measurement on the patient's own phone before the GP has seen them.
+- **Lab-grade measurement in a browser.** The voice engine is our own TypeScript implementation, calibrated against Praat, the clinical reference tool. It runs fully on the device.
+- **Free text that catches what checkboxes miss.** "My voice has been hoarse for two months" in a comment box becomes an "ask about this" note for the doctor, with negation handling in Finnish and English.
+- **Screening and workflow in one.** The same form that finds red flags also saves the doctor history-taking time, so the visit pays for the screening.
+
+## How it scales
+
+| | |
 |---|---|
-| `src/engine/questionnaire.ts` | NICE NG12 red-flag rules (lung, colorectal, larynx, upper GI), PLCOm2012, VHI-10, G8, EQ-5D-5L profile, FI/EN free-text symptom extraction |
-| `src/engine/voice.ts` | On-device acoustic analysis: F0, jitter, shimmer, HNR mean/SD, CPPS, MPT, pause ratio |
-| `src/engine/report.ts` | EHR-ready history (EN/FI) and an HL7 FHIR R4 QuestionnaireResponse |
-| `src/engine/impact.ts` | Transparent impact model plus a closed-form combined-AUC explorer |
-| `src/pages/` | Landing (2-minute brief), patient form, clinician view, regional gap and early warning, impact, evidence, recommendations |
-| `analysis/validate_voice.py` | Validates the browser voice engine against Praat 6.1 and fits a calibration |
-| `analysis/node/text_eval.ts` | Development and held-out evaluation of the symptom extractor |
+| **Delivery** | A link in an SMS the county already sends. Works on any smartphone browser. |
+| **Cost** | About €0.50 per form (SMS and hosting). No devices, no new staff. |
+| **Integration** | Day one: copy-paste into any record system. Later: HL7 FHIR R4 `QuestionnaireResponse`, already exported by the demo. |
+| **National roll-out** | One static site; could be offered through Omaolo so every county gets it without its own procurement. |
+| **Fallback** | No smartphone? A nurse asks the same questions by phone, the PUHELU model. |
+| **Example region** | 40,000 forms a year: about 1,333 doctor hours freed, 1,600 people sent for a test within two weeks, about €70k net saving after all costs (adjustable model on the [impact page](https://latt33.github.io/SEULA/#/impact)). |
 
-## Results (reproducible)
+Six concrete actions for a county, each with an owner, timeline and success measure, are on the [recommendations page](https://latt33.github.io/SEULA/#/pilot).
 
-**Voice engine vs Praat (240 synthetic sustained vowels, calibrated measures on a held-out half):**
+## What it is built on
 
-| Measure | Pearson r |
+Only published guidelines and validated instruments. Every flag in the app shows its rule and links to its source.
+
+| Instrument | Used for |
 |---|---|
-| HNR | 1.00 |
-| Shimmer | 0.96 |
-| CPPS | 0.95 |
-| Jitter | 0.94 |
-| F0 | 0.95 |
+| NICE NG12 suspected-cancer rules | Lung, colorectal, laryngeal and upper-GI red flags |
+| PLCOm2012 (threshold 1.51%) | 6-year lung cancer risk in people who have ever smoked |
+| VHI-10 | Self-rated voice handicap |
+| G8 | Frailty screen for patients 70+ |
+| EQ-5D-5L | Health-related quality of life profile for referrals |
+| CPPS, HNR, jitter, shimmer, F0 | Acoustic voice measures |
 
-**Text extraction (FI/EN, held-out set):** precision 0.87, recall 0.77.
+Supporting research includes Maryn et al. 2009 (CPPS the most valid single voice measure), Murton et al. 2020 (CPPS cut-off, AUC 0.93), Jannetts et al. 2019 and Uloza et al. 2023 (phone microphones match studio microphones), Kim et al. 2024 and Paterson et al. 2025 (voice and laryngeal disease) and the UK QCancer tools running in 4,000+ practices. The full list is on the [evidence page](https://latt33.github.io/SEULA/#/evidence) and in `src/data/sources.ts`.
 
-**What voice can and cannot do:** CPPS separates dysphonic from normal voices with AUC 0.93 (Murton 2020), which makes it useful for deciding who needs a laryngoscopy. Voice does not distinguish cancer from benign lesions (Jenkins 2025). The questionnaire carries lung and colorectal cancer.
+## How it performs
 
-## Run it
+**Voice engine vs Praat 6.1** (240 synthetic sustained vowels, calibrated on one half, tested on the held-out half):
+
+<div align="center">
+
+| HNR | Shimmer | CPPS | F0 | Jitter |
+|:-:|:-:|:-:|:-:|:-:|
+| r = 1.00 | r = 0.96 | r = 0.95 | r = 0.95 | r = 0.94 |
+
+</div>
+
+**Free-text symptom extraction** (Finnish and English, held-out set): precision 0.87, recall 0.77.
+
+**What voice can and cannot do.** CPPS separates dysphonic from normal voices (AUC 0.93), so it is useful for deciding who needs a laryngoscopy. It does not tell cancer from a benign lesion; the laryngoscopy does. Voice and free text therefore never raise the urgency on their own. The questionnaire carries lung and colorectal cancer.
+
+## How to use it
+
+**Try the demo:** open [latt33.github.io/SEULA](https://latt33.github.io/SEULA/), press *Try it yourself* (or *Open on phone* for a QR code), then see the result in the *For doctors* view.
+
+**Run it locally:**
 
 ```bash
 npm install
-npm run dev          # http://localhost:5173  (use --host to open on a phone in the same Wi-Fi)
-npm run build        # static site in dist/, runs from any static host
+npm run dev      # http://localhost:5173 (add --host to open it on a phone on the same Wi-Fi)
+npm run build    # static site in dist/, runs on any static host
 ```
 
-The microphone needs HTTPS or localhost. For the live demo, deploy to GitHub Pages: push to `main` and enable Pages → "GitHub Actions" (workflow included).
+The microphone needs HTTPS or localhost. Pushing to `main` deploys to GitHub Pages through the included workflow.
 
-Reproduce the evidence:
+**Reproduce the evidence:**
 
 ```bash
 pip install -r analysis/requirements.txt
-python3 analysis/validate_voice.py --n 240                  # synthetic validation vs Praat
+python3 analysis/validate_voice.py --n 240                  # voice engine vs Praat
 python3 analysis/validate_voice.py --voiced path/to/voiced  # optional: PhysioNet VOICED database
-npx tsx analysis/node/text_eval.ts
+npx tsx analysis/node/text_eval.ts                          # symptom extraction
 ```
+
+<details>
+<summary><b>Code map</b></summary>
+
+| Path | What |
+|---|---|
+| `src/engine/questionnaire.ts` | NG12 rules, PLCOm2012, VHI-10, G8, EQ-5D-5L, free-text symptom extraction |
+| `src/engine/voice.ts` | On-device voice analysis and spectrogram |
+| `src/engine/report.ts` | Patient-record history (EN/FI) and FHIR R4 output |
+| `src/engine/impact.ts` | Impact model and combined-AUC explorer |
+| `src/pages/` | Home, patient form, doctor's view, regions, impact, evidence, recommendations |
+| `analysis/` | Voice validation against Praat and text extraction evaluation |
+
+</details>
 
 ## Design rules
 
-1. Only validated instruments and published guideline rules. Every flag shows its rule and source.
-2. Voice and free text never raise the triage level on their own. They surface questions for the clinician.
+1. Only validated instruments and published guideline rules.
+2. Voice and free text never raise the urgency on their own; they give the doctor questions to ask.
 3. Audio never leaves the phone. Only numbers are stored.
-4. The patient never sees a risk score. They always get the 116117 safety-net.
+4. The patient never sees a risk score and always gets the 116117 safety-net number.
 
 ## Limitations
 
-- NG12 is a UK guideline, used as a stand-in until FICAN publishes Finnish pathway criteria (roadmap action 3.1.2).
-- Voice validation is against Praat on synthetic voices, not on patients. Clinical accuracy needs the pilot.
-- Finnish VHI-10, G8 and EQ-5D wording in the demo are unofficial translations. Production needs the validated versions and a EuroQol licence.
-- Regional figures were transcribed from the THL Terve Suomi 2024 appendix; verify against Sotkanet before publication.
-- This is a research prototype, not a medical device. Decision support of this kind is likely MDR class IIa.
+- NG12 is a UK guideline, used until FICAN publishes Finnish pathway criteria (roadmap action 3.1.2).
+- The voice engine is validated against Praat on synthetic voices. Clinical accuracy is what the pilot measures.
+- Finnish VHI-10, G8 and EQ-5D wording in the demo are unofficial; production needs the validated versions and a EuroQol licence.
+- Research prototype, not a medical device. Decision support like this is likely MDR class IIa.
 
-Team: Atte Laakso, Nikolas Juhava, Konsta Kiirikki, Qilun Li.
+---
+
+<div align="center">
+
+**Team:** Atte Laakso · Nikolas Juhava · Konsta Kiirikki · Qilun Li
+
+</div>
