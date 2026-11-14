@@ -40,6 +40,15 @@ export const DEMO_PATIENTS: DemoPatient[] = [
     voice: v('p2', 8.4),
   },
   {
+    id: 'p7',
+    name: 'Olena S.',
+    appointment: '09:20',
+    reason: 'Cough (form in Ukrainian)',
+    symptomOnsetDaysAgo: 44,
+    completedDaysAgo: 1,
+    answers: { age: 59, sex: 'f', heightCm: 164, weightKg: 58, smoking: 'former', cigsPerDay: 10, yearsSmoked: 25, yearsSinceQuit: 8, symptoms: { cough: '3to6w' }, eq5d: { mobility: 1, selfcare: 1, activities: 2, pain: 1, anxiety: 3 }, eqVas: 65, freeText: 'Кашель триває вже понад місяць, іноді з прожилками крові. За два місяці схудла приблизно на 5 кг. Болю в грудях немає.' },
+  },
+  {
     id: 'p3',
     name: 'Leena H.',
     appointment: '09:00',

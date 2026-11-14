@@ -60,6 +60,16 @@ The region gets a dashboard of days from first symptom to doctor, per health sta
 - **Machine listening:** on-device speech signal analysis extracts clinical voice biomarkers (CPPS, HNR, jitter, shimmer), calibrated against Praat.
 - **Rules where accountability matters:** triage uses published guideline rules (NG12, PLCOm2012), so every flag is explainable. AI adds signal; it never raises urgency on its own.
 
+## Gemma, on the clinic computer
+
+SEULA runs Google's open **Gemma 3 1B** model inside the doctor's browser (Transformers.js + WebGPU). The weights download once (about 1 GB) and are cached; patient text never leaves the computer, so there is no data-processing agreement, no cloud API and no per-call cost.
+
+- **Reads the patient's own words in any language.** Finland's language barrier is a known inequity in cancer care. Gemma reads free text in Finnish, Swedish, Ukrainian, Russian, Arabic and more, extracts symptoms with quotes and durations, flags what was written but not ticked ("Not ticked: ask") and gives the doctor a one-line Finnish summary. Try the demo patient *Olena S.*, whose form is in Ukrainian: the rule-based reader finds nothing, Gemma finds blood in the cough and weight loss.
+- **Writes the referral letter.** From the structured referral facts, Gemma drafts the lähete as Finnish prose for the doctor to edit.
+- **Never decides urgency.** Gemma's output is shown as suggestions; triage stays with the published guideline rules.
+
+Why an open model: a wellbeing services county can run the same weights on its own servers or on every clinic PC, keep the data in Finland, audit the model and fine-tune it on Finnish clinical text. The next step is Gemma 4 E2B, which also takes audio, so a patient could describe symptoms out loud in their own language.
+
 ## National cancer strategy, Goal 3
 
 | Action | Goal 3 indicator |
