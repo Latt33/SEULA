@@ -6,7 +6,7 @@
   "boxes": [],
   "boxes_raw": "[]",
   "ct_within_2_weeks": true,
-  "seconds": 6.1,
+  "seconds": 5.9,
   "recorded": "2026-11-14"
  },
  "00000276_000": {
@@ -16,7 +16,7 @@
   "boxes": [],
   "boxes_raw": "[]",
   "ct_within_2_weeks": false,
-  "seconds": 4.2,
+  "seconds": 3.2,
   "recorded": "2026-11-14"
  }
 }
