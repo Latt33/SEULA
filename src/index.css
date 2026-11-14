@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #faf8f5;
+  --foreground: #1a1a18;
+  --muted: #e8e4de;
+  --muted-foreground: #6b6560;
+  --primary: #d97757;
+  --primary-foreground: #faf8f5;
+  --brand-blue: #2f6fb5;
+  --line: #ece8e2;
+  --background-rgb: 250 248 245;
+  --foreground-rgb: 26 26 24;
+  --muted-rgb: 232 228 222;
+  --muted-foreground-rgb: 107 101 96;
+  --primary-rgb: 217 119 87;
+  --brand-blue-rgb: 47 111 181;
+  --line-rgb: 236 232 226;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: 'Poppins', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; }
+h1 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.035em; font-weight: 550; }
+.prose-serif { font-family: 'Lora', Georgia, serif; }
+.tnum { font-variant-numeric: tabular-nums; }
+
+.card { @apply bg-white rounded-xl border border-line; }
+.eyebrow { @apply text-xs font-medium text-muted-foreground uppercase tracking-wider; }
+.btn { @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold transition-all; }
+.btn-primary { @apply btn text-primary-foreground bg-primary hover:bg-primary/90 shadow-sm hover:shadow-md; }
+.btn-ghost { @apply btn bg-white border border-line text-foreground hover:bg-muted/50; }
+.chip { @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium; }
+
+/* Breathing hero, carried over from PUHELU */
+@keyframes breathe-outer { 0%,100% { transform: scale(0.85); opacity: .22 } 50% { transform: scale(1); opacity: .4 } }
+@keyframes breathe-inner { 0%,100% { transform: scale(1); opacity: .25 } 50% { transform: scale(.88); opacity: .12 } }
+.hero-breath { position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  mask-image: radial-gradient(ellipse 80% 90% at 50% 40%, white, transparent);
+  -webkit-mask-image: radial-gradient(ellipse 80% 90% at 50% 40%, white, transparent); }
+.hero-breath::before, .hero-breath::after { content: ''; position: absolute; border-radius: 50%; top: 50%; left: 50%; translate: -50% -50%; }
+.hero-breath::before { width: 800px; height: 800px; background: radial-gradient(circle, var(--primary) 0%, transparent 70%); animation: breathe-outer 6s ease-in-out infinite; }
+.hero-breath::after { width: 500px; height: 500px; background: radial-gradient(circle, var(--brand-blue) 0%, transparent 70%); animation: breathe-inner 6s ease-in-out infinite; animation-delay: -1.5s; }
+
+@keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(217,119,87,.45) } 100% { box-shadow: 0 0 0 22px rgba(217,119,87,0) } }
+.rec-pulse { animation: pulse-ring 1.4s ease-out infinite; }
+input[type=range] { accent-color: var(--primary); }

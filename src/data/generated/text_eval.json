@@ -1,0 +1,86 @@
+{
+  "development": {
+    "n": 46,
+    "labels": 44,
+    "tp": 44,
+    "fp": 1,
+    "fn": 0,
+    "precision": 0.9777777777777777,
+    "recall": 1,
+    "f1": 0.9887640449438202,
+    "errors": [
+      {
+        "text": "Veriyskää ei ole ollut",
+        "expected": [],
+        "got": [
+          "haemoptysis"
+        ]
+      }
+    ]
+  },
+  "heldOut": {
+    "n": 30,
+    "labels": 26,
+    "tp": 20,
+    "fp": 3,
+    "fn": 6,
+    "precision": 0.8695652173913043,
+    "recall": 0.7692307692307693,
+    "f1": 0.8163265306122449,
+    "errors": [
+      {
+        "text": "Spat out blood when coughing yesterday",
+        "expected": [
+          "haemoptysis"
+        ],
+        "got": [
+          "cough"
+        ]
+      },
+      {
+        "text": "It hurts to swallow bread",
+        "expected": [
+          "dysphagia"
+        ],
+        "got": []
+      },
+      {
+        "text": "Lost my appetite completely",
+        "expected": [
+          "appetiteLoss"
+        ],
+        "got": []
+      },
+      {
+        "text": "Yskiessä tulee verta",
+        "expected": [
+          "haemoptysis"
+        ],
+        "got": [
+          "cough"
+        ]
+      },
+      {
+        "text": "Äänessä on käheyttä",
+        "expected": [
+          "hoarseness"
+        ],
+        "got": []
+      },
+      {
+        "text": "Kaulalle on tullut patti",
+        "expected": [
+          "neckLump"
+        ],
+        "got": []
+      },
+      {
+        "text": "Vaimollani on yskä, minulla ei",
+        "expected": [],
+        "got": [
+          "cough"
+        ]
+      }
+    ]
+  }
+}

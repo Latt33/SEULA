@@ -1,0 +1,15 @@
+{
+  "cpps": {
+    "slope": 1.2045240917168352,
+    "intercept": -0.10836666161744694
+  },
+  "jitterLocal": {
+    "slope": 1.0380745161893092,
+    "intercept": 0.0314139776955105
+  },
+  "shimmerLocal": {
+    "slope": 1.0408963167458893,
+    "intercept": 1.3286614012989941
+  },
+  "note": "Linear map from SEULA raw CPPS to Praat 6.1.38 CPPS (Straight, Robust), fitted on synthetic vowels by analysis/validate_voice.py"
+}
