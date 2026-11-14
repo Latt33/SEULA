@@ -96,6 +96,26 @@ export function Evidence() {
         <p className="text-sm text-muted-foreground mt-3">Design choice: text never changes the triage level. It only shows “mentioned but not ticked” so the doctor asks. A missed mention costs nothing extra; a false one costs a question.</p>
       </Claim>
 
+      <section className="mt-12 mb-4">
+        <h2 className="text-2xl md:text-3xl text-deep mb-2">Supporting research</h2>
+        <p className="text-muted-foreground mb-6 max-w-2xl">Each part of SEULA rests on published work. Our own tests above check that the build reproduces it.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {LITERATURE.map(([title, items]) => (
+            <div key={title} className="card p-6">
+              <p className="font-medium text-deep mb-4">{title}</p>
+              <ul className="space-y-3">
+                {items.map(([finding, k]) => (
+                  <li key={k} className="text-[15px] leading-snug">
+                    <span className="text-deep">{finding}</span>
+                    <span className="block mt-0.5"><Cite k={k} /></span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div className="card-cream p-7 mt-8">
         <p className="font-semibold mb-2 flex items-center gap-2"><FlaskConical size={18} className="text-primary" /> What a 6-month pilot must prove</p>
         <ul className="text-sm text-muted-foreground list-disc ml-5 space-y-1">
@@ -109,6 +129,30 @@ export function Evidence() {
     </Page>
   );
 }
+
+const LITERATURE: [string, [string, string][]][] = [
+  ['Voice clarity is a valid clinical measure', [
+    ['Meta-analysis of 25 studies: smoothed cepstral peak prominence (CPPS) was the only measure valid in both vowels and speech.', 'maryn2009'],
+    ['CPPS tracked the doctor-rated grade of hoarseness better than the other acoustic measures tested.', 'hemanAckah2002'],
+    ['Cut-off of 14.45 dB separates dysphonic from normal voices (AUC 0.93).', 'murton2020'],
+  ]],
+  ['A phone microphone is good enough', [
+    ['Across common smartphones, F0 and CPPS had acceptable error against a studio microphone; jitter and shimmer did not. SEULA leads with CPPS for this reason.', 'jannetts2019'],
+    ['Smartphone and studio recordings told normal from disordered voices equally well (AUC difference 0.028, not significant).', 'uloza2023'],
+  ]],
+  ['Voice carries signal about laryngeal disease', [
+    ['AI separated laryngeal disease from healthy voices with 0.85–0.97 accuracy, but cancer vs benign lesion was harder.', 'kim2024'],
+    ['Open benchmark on public datasets: best model AUROC 0.92 for malignant vs benign voice pathology.', 'paterson2025'],
+    ['HNR and F0 differed between men with laryngeal cancer, benign lesions and healthy voices.', 'jenkins2025'],
+    ['The NIH funds a $14M programme to make voice a clinical biomarker, laryngeal cancer included.', 'bridge2ai'],
+  ]],
+  ['Acting earlier changes outcomes', [
+    ['In 2,753 laryngeal cancers, a shorter time from hoarseness to diagnosis meant better 5-year survival.', 'dysphoniaSurvival'],
+    ['61% of total lung cancer delay was before the patient contacted primary care.', 'kotecha2021'],
+    ['Median 49 days from first GP visit to chest X-ray; only 35% within the 14 days guidelines ask for.', 'cxrDelay'],
+    ['A pre-consultation questionnaire cut consultations from 22 to 15 minutes.', 'stockport'],
+  ]],
+];
 
 function Claim({ n, title, ok, children }: { n: number; title: string; ok: boolean; children: React.ReactNode }) {
   return (

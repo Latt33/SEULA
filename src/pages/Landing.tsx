@@ -1,8 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check, ChevronDown, ClipboardList, Mic, Minus, QrCode, Stethoscope, X } from 'lucide-react';
+import { ArrowRight, Check, MapPin, ChevronDown, ClipboardList, Mic, Minus, QrCode, Stethoscope, X } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Cite, Footer, Nav } from '../components/ui';
+import { SOURCES } from '../data/sources';
+
+const SRC = (k: string) => SOURCES[k]?.url ?? '#';
+
+const COMPARE: [string, string, string, boolean][] = [
+  ['Population screening', 'Invites everyone for one cancer type.', 'Misses people who already have symptoms.', false],
+  ['Blood tests for many cancers', 'A lab test for every person.', 'Cost per person; benefit on deaths not yet shown.', false],
+  ['AI on health records', 'Integration with every record system.', 'Only sees what was already written down.', false],
+  ['SEULA', 'A link in the booking text message.', 'Asks the symptom questions before the visit, for every cancer in the guideline.', true],
+];
 import { DoctorCard, FormScreen, Phone, VoiceScreen } from '../components/Mockups';
 import { Ring, SpectrogramCanvas } from '../components/VoicePanel';
 import demoVoices from '../data/generated/demo_voices.json';
@@ -28,6 +38,7 @@ export function Landing() {
   return (
     <div className="min-h-[100dvh] flex flex-col">
       <Nav />
+      <WhyToast />
 
       {/* Hero */}
       <section className="bg-mist">
@@ -68,6 +79,44 @@ export function Landing() {
         </div>
       </section>
 
+
+      {/* Why this is the simplest screening */}
+      <section className="pb-28 md:pb-32 px-5">
+        <div className="mx-auto max-w-6xl">
+          <div className="max-w-3xl mb-12">
+            <p className="eyebrow mb-3">Why this works</p>
+            <h2 className="text-4xl md:text-5xl text-deep mb-5">The simplest screening is the visit people already book</h2>
+            <p className="text-xl text-muted-foreground leading-relaxed">Most of the delay happens before and at the first doctor visit. SEULA works exactly there, without a new programme, device or appointment.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12">
+            {[
+              ['61%', 'of the delay in lung cancer is before the patient sees a GP.', 'kotecha2021', 'Asks about symptoms people tend to wait out.'],
+              ['35%', 'of symptomatic patients in English primary care got the recommended chest X-ray within 14 days.', 'cxrDelay', 'Turns guideline rules into a ready next step.'],
+              ['4,000+', 'UK practices already run symptom-based cancer risk tools inside routine care.', 'qcancer', 'The same idea, moved to before the visit.'],
+            ].map(([v, l, c, so]) => (
+              <div key={v} className="card p-7 flex flex-col">
+                <p className="text-5xl font-medium text-deep tnum mb-3">{v}</p>
+                <p className="text-muted-foreground leading-snug mb-2">{l} <Cite k={c}>source</Cite></p>
+                <p className="mt-auto pt-4 border-t border-line text-deep">{so}</p>
+              </div>
+            ))}
+          </div>
+          <div className="card-cream p-6 md:p-8">
+            <p className="text-lg font-medium text-deep mb-5">Compared with other ways to find cancer earlier</p>
+            <div className="divide-y divide-line">
+              {COMPARE.map(([name, need, gap, us]) => (
+                <div key={name} className={`grid grid-cols-1 md:grid-cols-[200px_1fr_1fr] gap-1 md:gap-6 py-4 ${us ? 'text-deep' : ''}`}>
+                  <p className={`font-medium ${us ? 'text-primary' : 'text-deep'}`}>{name}</p>
+                  <p className={us ? '' : 'text-muted-foreground'}>{need}</p>
+                  <p className={us ? '' : 'text-muted-foreground'}>{gap}</p>
+                </div>
+              ))}
+            </div>
+            <Link to="/region" className="inline-flex items-center gap-1.5 mt-6 text-primary font-medium hover:underline">See where in Finland it matters most <ArrowRight size={16} /></Link>
+          </div>
+        </div>
+      </section>
+
       {/* Three moments */}
       <section className="pb-24 px-5">
         <div className="mx-auto max-w-6xl">
@@ -99,7 +148,20 @@ export function Landing() {
           <div className="mx-auto max-w-6xl grid lg:grid-cols-[1fr_1.3fr] gap-12 items-center">
             <div>
               <h2 className="text-4xl md:text-5xl mb-6">One “aaah”, read like a lab result</h2>
-              <p className="text-xl text-cream/75 leading-relaxed mb-10">A steady voice shows sharp lines. A strained voice blurs them.</p>
+              <p className="text-xl text-cream/75 leading-relaxed mb-8">A steady voice shows sharp lines. A strained voice blurs them.</p>
+              <p className="text-sm font-medium text-cream mb-4">Why voice is new here</p>
+              <ol className="space-y-4 mb-10">
+                {[
+                  ['Hoarseness is often the first sign.', 'Glottic cancer, the most common laryngeal cancer, shows up in the voice early. Over 80% survive 5 years when it is found early; 36–55% when advanced.', 'dysphoniaSurvival'],
+                  ['Until now, measured only in voice labs.', 'Voice clarity (CPPS) is the best-validated acoustic measure, but it is usually taken after referral. Phone microphones now match studio microphones for it.', 'jannetts2019'],
+                  ['SEULA measures it before the first visit.', 'Research groups use voice after referral. SEULA puts the same measure on the patient’s own phone, before the GP has even seen them.', 'paterson2025'],
+                ].map(([t, d, c], i) => (
+                  <li key={t} className="flex gap-4">
+                    <span className="w-7 h-7 rounded-full border border-cream/30 text-cream/80 flex items-center justify-center text-sm shrink-0">{i + 1}</span>
+                    <div><p className="text-cream">{t}</p><p className="text-cream/65 text-[15px] leading-relaxed">{d} <a href={SRC(c)} target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 text-cream/50 hover:text-cream">source</a></p></div>
+                  </li>
+                ))}
+              </ol>
               <Link to="/evidence" className="btn-light">How we checked it <ArrowRight size={16} /></Link>
             </div>
             <div className="space-y-6">
@@ -179,6 +241,36 @@ export function Landing() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+
+function WhyToast() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    let seen = false;
+    try { seen = sessionStorage.getItem('seula-why') === '1'; } catch { /* storage unavailable */ }
+    if (seen) return;
+    const t = window.setTimeout(() => setShow(true), 1400);
+    return () => window.clearTimeout(t);
+  }, []);
+  const close = () => {
+    setShow(false);
+    try { sessionStorage.setItem('seula-why', '1'); } catch { /* storage unavailable */ }
+  };
+  if (!show) return null;
+  return (
+    <div role="status" className="fixed z-50 bottom-4 left-4 right-4 sm:right-auto sm:max-w-sm card p-5 shadow-[0_12px_40px_-12px_rgba(29,28,26,0.35)] animate-[fadeUp_.4s_ease-out]">
+      <button onClick={close} aria-label="Close" className="absolute top-3 right-3 text-muted-foreground hover:text-deep"><X size={18} /></button>
+      <div className="flex gap-3 pr-6">
+        <span className="w-9 h-9 rounded-full bg-sage text-primary flex items-center justify-center shrink-0"><MapPin size={17} /></span>
+        <div>
+          <p className="font-medium text-deep mb-1">New here? Start with why it matters</p>
+          <p className="text-[15px] text-muted-foreground leading-snug mb-3">In parts of Finland nearly 1 in 3 people feel they cannot get enough doctor time. See where SEULA helps first.</p>
+          <Link to="/region" onClick={close} className="inline-flex items-center gap-1.5 text-primary font-medium hover:underline">Why it matters <ArrowRight size={15} /></Link>
+        </div>
+      </div>
     </div>
   );
 }
