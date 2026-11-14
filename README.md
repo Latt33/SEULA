@@ -26,20 +26,21 @@ Built on [PUHELU](https://github.com/Latt33/PUHELU). *Seula* is Finnish for *sie
 
 ## The problem
 
-In Finland, cancer is often found late, and how late depends on where you live.
+In Finland, cancer is often found late, and how late depends on where you live and how much you earn.
 
 | | |
 |---|---|
 | **16.7%** | of Finnish men with lung cancer are alive after 5 years. Sweden: 26.8% (Acta Oncol 2025) |
 | **27%** | of lung cancer patients get treatment that aims to cure (quality registry 2019–2023) |
 | **19.3–32.1%** | of residents, depending on the region, feel they get too little doctor time (THL Terve Suomi 2024) |
+| **127 vs 76 days** | median from first symptom to treatment via public primary care vs private or occupational care; income decides the first door (lymphoma, Kuitunen et al., Cancer Medicine 2026) |
 | **61%** | of lung cancer delay happens before the patient even sees a GP (Kotecha, BJGP Open 2021) |
 
-The warning signs are there at the first visit. They get lost because the visit is short, the history is taken from scratch and the signs depend on what the patient remembers to mention.
+The slowest route, public primary care, serves the people with the least. The warning signs are there at the first visit. They get lost because the visit is short, the history is taken from scratch and the signs depend on what the patient remembers to mention.
 
 ## What SEULA does
 
-1. **At home.** The patient opens the link from their booking SMS and answers short, validated symptom questions in Finnish or English.
+1. **At home.** The patient opens the link from their booking SMS and answers short, validated symptom questions in Finnish, Swedish or English.
 2. **Three seconds of "aaah".** The phone measures how steady the voice is. The audio is analysed on the phone and never uploaded.
 3. **At the visit.** The GP sees a list sorted by urgency, the reasons behind each flag with the guideline that triggered it, a suggested next step (chest X-ray, FIT, laryngoscopy) and a history to paste straight into the record.
 
@@ -52,6 +53,22 @@ The region gets a dashboard of days from first symptom to doctor, per health sta
 - **Free text that catches what checkboxes miss.** "My voice has been hoarse for two months" in a comment box becomes an "ask about this" note for the doctor, with negation handling in Finnish and English.
 - **Screening and workflow in one.** The same form that finds red flags also saves the doctor history-taking time, so the visit pays for the screening.
 
+## Where the AI is
+
+- **Language understanding:** reads free text and dictation (Finnish and English), handles negation and third-person mentions, and surfaces red flags the patient forgot to tick (held-out precision 0.87, recall 0.77).
+- **Machine listening:** on-device speech signal analysis extracts clinical voice biomarkers (CPPS, HNR, jitter, shimmer), calibrated against Praat.
+- **Rules where accountability matters:** triage uses published guideline rules (NG12, PLCOm2012), so every flag is explainable. AI adds signal; it never raises urgency on its own.
+
+## National cancer strategy, Goal 3
+
+| Action | Goal 3 indicator |
+|---|---|
+| R1 Link with every non-urgent GP booking, lower-income areas first | 3.5.3 |
+| R2 Nurses book the 2-week test from a flag; R3 fast-track laryngoscopy | 3.1.2 |
+| R4 G8 and EQ-5D-5L on every referral 70+ | 3.4.2 / 3.3.1 |
+| R5 Symptom-to-test days per station and by income group, alert at 28 days | 3.1.2 / 3.2.2 |
+| R6 Comparator county with Cancer Registry linkage, results by education and income | 3.2 |
+
 ## How it scales
 
 | | |
@@ -61,6 +78,7 @@ The region gets a dashboard of days from first symptom to doctor, per health sta
 | **Integration** | Day one: copy-paste into any record system. Later: HL7 FHIR R4 `QuestionnaireResponse`, already exported by the demo. |
 | **National roll-out** | One static site; could be offered through Omaolo so every county gets it without its own procurement. |
 | **Fallback** | No smartphone? A nurse asks the same questions by phone, the PUHELU model. |
+| **Equity** | Start at health stations serving lower-income postcode areas (Statistics Finland Paavo). In production, the booking system sends the link automatically and registry linkage reports delays by income group. |
 | **Example region** | 40,000 forms a year: about 1,333 doctor hours freed, 1,600 people sent for a test within two weeks, about €70k net saving after all costs (adjustable model on the [impact page](https://latt33.github.io/SEULA/#/impact)). |
 
 Six concrete actions for a county, each with an owner, timeline and success measure, are on the [recommendations page](https://latt33.github.io/SEULA/#/pilot).

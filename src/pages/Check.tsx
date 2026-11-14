@@ -96,7 +96,7 @@ export function Check() {
       return;
     }
     const r = new C();
-    r.lang = lang === 'fi' ? 'fi-FI' : 'en-GB';
+    r.lang = lang === 'fi' ? 'fi-FI' : lang === 'sv' ? 'sv-FI' : 'en-GB';
     r.continuous = true;
     r.interimResults = false;
     const base = a.freeText ? a.freeText + ' ' : '';
@@ -118,7 +118,7 @@ export function Check() {
       <header className="px-5 h-16 flex items-center justify-between border-b border-line bg-white/90 sticky top-0 z-10 backdrop-blur">
         <Link to="/"><Wordmark /></Link>
         <div className="flex items-center gap-1 text-sm">
-          {(['fi', 'en'] as Lang[]).map((l) => (
+          {(['fi', 'sv', 'en'] as Lang[]).map((l) => (
             <button key={l} onClick={() => setLang(l)} className={`px-3 py-1 rounded-full ${lang === l ? 'bg-sage text-deep font-medium' : 'text-muted-foreground'}`}>
               {l.toUpperCase()}
             </button>
@@ -132,13 +132,13 @@ export function Check() {
       <main className="flex-1 w-full max-w-lg mx-auto px-5 py-8">
         {cur === 'intro' && (
           <div>
-            <p className="eyebrow mb-3">Terveysasema · Health centre</p>
+            <p className="eyebrow mb-3">Terveysasema · Hälsostation · Health centre</p>
             <h1 className="text-4xl text-deep mb-4">{t.title}</h1>
             <p className="prose-serif text-lg text-muted-foreground leading-relaxed mb-8">{t.intro}</p>
             <div className="card p-4 mb-8 space-y-3 text-sm">
-              <div className="flex gap-3 items-start"><Lock size={18} className="text-primary mt-0.5 shrink-0" /><span>{lang === 'fi' ? 'Ääni käsitellään vain tässä laitteessa.' : 'Audio is processed only on this device.'}</span></div>
-              <div className="flex gap-3 items-start"><ShieldCheck size={18} className="text-primary mt-0.5 shrink-0" /><span>{lang === 'fi' ? 'Kysymykset perustuvat kansainvälisiin, tutkittuihin mittareihin.' : 'Questions come from validated, international instruments.'}</span></div>
-              <div className="flex gap-3 items-start"><PhoneCall size={18} className="text-primary mt-0.5 shrink-0" /><span>{lang === 'fi' ? 'Kiireellisissä asioissa soita 116117 tai hätätilanteessa 112.' : 'If urgent, call 116117, or 112 in an emergency.'}</span></div>
+              <div className="flex gap-3 items-start"><Lock size={18} className="text-primary mt-0.5 shrink-0" /><span>{lang === 'fi' ? 'Ääni käsitellään vain tässä laitteessa.' : lang === 'sv' ? 'Ljudet behandlas bara i den här enheten.' : 'Audio is processed only on this device.'}</span></div>
+              <div className="flex gap-3 items-start"><ShieldCheck size={18} className="text-primary mt-0.5 shrink-0" /><span>{lang === 'fi' ? 'Kysymykset perustuvat kansainvälisiin, tutkittuihin mittareihin.' : lang === 'sv' ? 'Frågorna bygger på validerade, internationella mätinstrument.' : 'Questions come from validated, international instruments.'}</span></div>
+              <div className="flex gap-3 items-start"><PhoneCall size={18} className="text-primary mt-0.5 shrink-0" /><span>{lang === 'fi' ? 'Kiireellisissä asioissa soita 116117 tai hätätilanteessa 112.' : lang === 'sv' ? 'Vid brådskande ärenden ring 116117, i nödsituationer 112.' : 'If urgent, call 116117, or 112 in an emergency.'}</span></div>
             </div>
           </div>
         )}

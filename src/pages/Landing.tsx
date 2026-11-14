@@ -76,6 +76,21 @@ export function Landing() {
               </div>
             ))}
           </div>
+          <div className="mt-20 card p-7 md:p-10 text-left max-w-4xl mx-auto">
+            <p className="eyebrow mb-3">And not equally</p>
+            <h3 className="text-3xl md:text-4xl text-deep mb-3">The slowest route serves the people with the least</h3>
+            <p className="text-lg text-muted-foreground mb-8 max-w-2xl">Days from first symptom to treatment (median, lymphoma, Finland). Higher earners mostly start in private or occupational care; retirees and lower-income patients start in public primary care.</p>
+            <div className="space-y-5 mb-6">
+              {[['Private or occupational care', 76, 'bg-primary'], ['Public primary care', 127, 'bg-[#a8483f]']].map(([l, v, c]) => (
+                <div key={l as string}>
+                  <div className="flex justify-between mb-1.5"><span className="text-deep">{l as string}</span><span className="tnum font-medium text-deep">{v as number} days</span></div>
+                  <div className="h-3 rounded-full bg-mist"><div className={`h-3 rounded-full ${c as string}`} style={{ width: `${((v as number) / 140) * 100}%` }} /></div>
+                </div>
+              ))}
+            </div>
+            <p className="text-deep mb-2">SEULA goes through the public booking text message, so it prepares exactly the visit that is slowest today.</p>
+            <p className="text-sm text-muted-foreground">Low socioeconomic status means later stage, less treatment and higher mortality across most cancers in Finland. <Cite k="kuitunen2026">Kuitunen 2026</Cite> · <Cite k="zai2025">Zai 2025</Cite> · <Cite k="ammitzboll2022">Nordic review 2022</Cite></p>
+          </div>
         </div>
       </section>
 
@@ -86,7 +101,7 @@ export function Landing() {
           <div className="max-w-3xl mb-12">
             <p className="eyebrow mb-3">Why this works</p>
             <h2 className="text-4xl md:text-5xl text-deep mb-5">The simplest screening is the visit people already book</h2>
-            <p className="text-xl text-muted-foreground leading-relaxed">Most of the delay happens before and at the first doctor visit. SEULA works exactly there, without a new programme, device or appointment.</p>
+            <p className="text-xl text-muted-foreground leading-relaxed">Most of the delay happens before and at the first doctor visit: patients play symptoms down, and doctors miss them in a short visit. SEULA works on both, at the same first contact, without a new programme, device or appointment.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12">
             {[
@@ -267,7 +282,7 @@ function WhyToast() {
         <span className="w-9 h-9 rounded-full bg-sage text-primary flex items-center justify-center shrink-0"><MapPin size={17} /></span>
         <div>
           <p className="font-medium text-deep mb-1">New here? Start with why it matters</p>
-          <p className="text-[15px] text-muted-foreground leading-snug mb-3">In parts of Finland nearly 1 in 3 people feel they cannot get enough doctor time. See where SEULA helps first.</p>
+          <p className="text-[15px] text-muted-foreground leading-snug mb-3">Public primary care is the slowest route to cancer treatment, and it serves the people with the least. See where SEULA helps first.</p>
           <Link to="/region" onClick={close} className="inline-flex items-center gap-1.5 text-primary font-medium hover:underline">Why it matters <ArrowRight size={15} /></Link>
         </div>
       </div>

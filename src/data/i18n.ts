@@ -1,6 +1,6 @@
 import type { SymptomKey } from '../engine/questionnaire';
 
-export type Lang = 'fi' | 'en';
+export type Lang = 'fi' | 'sv' | 'en';
 
 export const T = {
   en: {
@@ -121,47 +121,107 @@ export const T = {
     quality: 'Äänitteen laatu',
     analysing: 'Analysoidaan puhelimessasi…',
   },
+  sv: {
+    title: 'Inför ditt besök',
+    intro: 'Din hälsostation ställer några frågor före besöket så att läkaren kan använda tiden för dig. Det tar cirka 4 minuter. Röstinspelningen analyseras i den här telefonen och skickas aldrig vidare.',
+    start: 'Börja',
+    next: 'Nästa',
+    back: 'Tillbaka',
+    skip: 'Hoppa över',
+    aboutYou: 'Om dig',
+    age: 'Ålder',
+    sex: 'Kön',
+    female: 'Kvinna',
+    male: 'Man',
+    height: 'Längd (cm)',
+    weight: 'Vikt (kg)',
+    smokingT: 'Rökning',
+    never: 'Har aldrig rökt',
+    former: 'Har slutat röka',
+    current: 'Röker nu',
+    cpd: 'Cigaretter per dag (i genomsnitt)',
+    years: 'Antal år som rökare totalt',
+    quit: 'År sedan du slutade',
+    education: 'Högsta utbildning',
+    eduOpts: ['Grundskola', 'Andra stadiet / yrkesutbildning', 'Institutnivå', 'Högskolestudier, ingen examen', 'Kandidat eller YH-examen', 'Magister eller högre'],
+    copd: 'Jag har fått diagnosen KOL eller emfysem',
+    cancerHx: 'Jag har haft cancer tidigare',
+    famLung: 'En förälder, ett syskon eller ett barn har haft lungcancer',
+    asbestos: 'Jag har arbetat med asbest',
+    symptomsT: 'Har du haft något av följande?',
+    symptomsHint: 'Kryssa för allt du har märkt på sistone, även om det känns litet. Välj sedan hur länge det har pågått.',
+    dur: { lt3w: 'Under 3 v', '3to6w': '3–6 v', gt6w: 'Över 6 v' },
+    none: 'Inget av dessa',
+    vhiT: 'Din röst',
+    vhiHint: 'Hur ofta stämmer påståendet in på dig?',
+    vhiScale: ['Aldrig', 'Nästan aldrig', 'Ibland', 'Nästan alltid', 'Alltid'],
+    g8T: 'Funktionsförmåga i vardagen',
+    g8Hint: 'Frågas av alla som fyllt 70 år. Det hjälper oss att planera vård som passar dig.',
+    eqT: 'Din hälsa i dag',
+    eqHint: 'Välj det alternativ som bäst beskriver din hälsa i dag.',
+    vas: 'Hur bra är din hälsa i dag? (0 = sämsta, 100 = bästa tänkbara)',
+    voiceT: 'Rösttest',
+    vowelHint: 'Gå till en lugn plats och håll telefonen cirka 20 cm från munnen. Andas in och säg ”aaaa” i bekväm tonhöjd så länge du orkar.',
+    readHint: 'Läs nu den här korta texten högt i normal takt.',
+    passage: 'Varje morgon promenerar jag till affären vid sjön. Stigen är lång, men luften är frisk och fåglarna sjunger. På vägen hem vilar jag på en bänk och tittar på båtarna.',
+    recStart: 'Tryck för att spela in',
+    recStop: 'tryck för att stoppa',
+    recAgain: 'Spela in igen',
+    recDenied: 'Mikrofonen är inte tillgänglig. Du kan hoppa över det här steget.',
+    recDone: 'Inspelat',
+    ownWordsT: 'Med egna ord',
+    ownWordsHint: 'Varför kommer du till mottagningen? Finns det något annat du vill att läkaren ska veta?',
+    dictate: 'Diktera',
+    dictateNote: 'Diktering använder webbläsarens taligenkänning. Du kan också skriva.',
+    doneT: 'Tack',
+    doneText: 'Dina svar är klara för din läkare. Formuläret ställer ingen diagnos.',
+    seeDoctor: 'Se vad läkaren ser',
+    redFlag: 'Blodiga upphostningar eller sväljsvårigheter bör bedömas snart. Kontakta din hälsostation i dag eller ring Jourhjälpen 116117.',
+    quality: 'Inspelningens kvalitet',
+    analysing: 'Analyseras i din telefon…',
+  },
 };
 
-export const SYMPTOMS_I18N: Record<SymptomKey, { en: string; fi: string }> = {
-  cough: { en: 'Cough', fi: 'Yskä' },
-  haemoptysis: { en: 'Coughing up blood', fi: 'Veriyskä' },
-  sob: { en: 'Shortness of breath', fi: 'Hengenahdistus' },
-  chestPain: { en: 'Chest pain', fi: 'Rintakipu' },
-  chestInfections: { en: 'Repeated chest infections', fi: 'Toistuvat hengitystieinfektiot' },
-  fatigue: { en: 'Unusual tiredness', fi: 'Poikkeava väsymys' },
-  weightLoss: { en: 'Weight loss without trying', fi: 'Tahaton laihtuminen' },
-  appetiteLoss: { en: 'Loss of appetite', fi: 'Ruokahaluttomuus' },
-  hoarseness: { en: 'Hoarse or changed voice', fi: 'Käheä tai muuttunut ääni' },
-  neckLump: { en: 'Lump in the neck', fi: 'Kyhmy kaulalla' },
-  dysphagia: { en: 'Difficulty swallowing', fi: 'Nielemisvaikeus' },
-  rectalBleeding: { en: 'Blood in stool', fi: 'Verta ulosteessa' },
-  bowelChange: { en: 'Change in bowel habit', fi: 'Suolen toiminnan muutos' },
-  abdominalPain: { en: 'Abdominal pain', fi: 'Vatsakipu' },
+export const SYMPTOMS_I18N: Record<SymptomKey, { en: string; fi: string; sv: string }> = {
+  cough: { en: 'Cough', fi: 'Yskä', sv: 'Hosta' },
+  haemoptysis: { en: 'Coughing up blood', fi: 'Veriyskä', sv: 'Blodiga upphostningar' },
+  sob: { en: 'Shortness of breath', fi: 'Hengenahdistus', sv: 'Andnöd' },
+  chestPain: { en: 'Chest pain', fi: 'Rintakipu', sv: 'Bröstsmärta' },
+  chestInfections: { en: 'Repeated chest infections', fi: 'Toistuvat hengitystieinfektiot', sv: 'Upprepade luftvägsinfektioner' },
+  fatigue: { en: 'Unusual tiredness', fi: 'Poikkeava väsymys', sv: 'Ovanlig trötthet' },
+  weightLoss: { en: 'Weight loss without trying', fi: 'Tahaton laihtuminen', sv: 'Viktnedgång utan att försöka' },
+  appetiteLoss: { en: 'Loss of appetite', fi: 'Ruokahaluttomuus', sv: 'Aptitlöshet' },
+  hoarseness: { en: 'Hoarse or changed voice', fi: 'Käheä tai muuttunut ääni', sv: 'Hes eller förändrad röst' },
+  neckLump: { en: 'Lump in the neck', fi: 'Kyhmy kaulalla', sv: 'Knöl på halsen' },
+  dysphagia: { en: 'Difficulty swallowing', fi: 'Nielemisvaikeus', sv: 'Sväljsvårigheter' },
+  rectalBleeding: { en: 'Blood in stool', fi: 'Verta ulosteessa', sv: 'Blod i avföringen' },
+  bowelChange: { en: 'Change in bowel habit', fi: 'Suolen toiminnan muutos', sv: 'Förändrade avföringsvanor' },
+  abdominalPain: { en: 'Abdominal pain', fi: 'Vatsakipu', sv: 'Buksmärta' },
 };
 
 /** VHI-10 items (Rosen et al. 2004). Finnish wording is an unofficial demo translation. */
 export const VHI10 = {
   en: ['My voice makes it difficult for people to hear me.', 'People have difficulty understanding me in a noisy room.', 'My voice difficulties restrict personal and social life.', 'I feel left out of conversations because of my voice.', 'My voice problem causes me to lose income.', 'I feel as though I have to strain to produce voice.', 'The clarity of my voice is unpredictable.', 'My voice problem upsets me.', 'My voice makes me feel handicapped.', 'People ask, “What’s wrong with your voice?”'],
   fi: ['Ääneni takia ihmisten on vaikea kuulla minua.', 'Ihmisten on vaikea ymmärtää minua meluisassa tilassa.', 'Ääniongelmani rajoittavat henkilökohtaista ja sosiaalista elämääni.', 'Tunnen jääväni keskustelujen ulkopuolelle ääneni takia.', 'Ääniongelmani aiheuttaa minulle tulonmenetyksiä.', 'Minusta tuntuu, että joudun ponnistelemaan saadakseni ääntä.', 'Ääneni selkeys vaihtelee arvaamattomasti.', 'Ääniongelmani harmittaa minua.', 'Ääneni saa minut tuntemaan itseni rajoittuneeksi.', 'Ihmiset kysyvät, mikä äänelläni on.'],
+  sv: ['Min röst gör det svårt för andra att höra mig.', 'Andra har svårt att förstå mig i ett bullrigt rum.', 'Mina röstproblem begränsar mitt privat- och sociala liv.', 'Jag känner mig utanför i samtal på grund av min röst.', 'Mitt röstproblem gör att jag förlorar inkomst.', 'Jag känner att jag måste anstränga mig för att få fram rösten.', 'Hur klar min röst är går inte att förutsäga.', 'Mitt röstproblem gör mig upprörd.', 'Min röst får mig att känna mig handikappad.', 'Andra frågar: ”Vad är det med din röst?”'],
 };
 
 /** G8 self-report items (Bellera 2012); BMI and age items are computed. */
-export const G8_ITEMS: { key: 'food' | 'weight' | 'mobility' | 'neuro' | 'meds' | 'selfHealth'; en: string; fi: string; opts: { v: number; en: string; fi: string }[] }[] = [
-  { key: 'food', en: 'Has your food intake declined over the past 3 months?', fi: 'Onko syömäsi ruoan määrä vähentynyt viimeisen 3 kuukauden aikana?', opts: [{ v: 0, en: 'A lot', fi: 'Paljon' }, { v: 1, en: 'Somewhat', fi: 'Jonkin verran' }, { v: 2, en: 'No', fi: 'Ei' }] },
-  { key: 'weight', en: 'Weight loss during the past 3 months?', fi: 'Painon lasku viimeisen 3 kuukauden aikana?', opts: [{ v: 0, en: 'More than 3 kg', fi: 'Yli 3 kg' }, { v: 1, en: 'Don’t know', fi: 'En tiedä' }, { v: 2, en: '1–3 kg', fi: '1–3 kg' }, { v: 3, en: 'No weight loss', fi: 'Ei laskua' }] },
-  { key: 'mobility', en: 'How do you move about?', fi: 'Miten liikut?', opts: [{ v: 0, en: 'Bed or chair bound', fi: 'Vuode- tai tuolipotilas' }, { v: 1, en: 'Up indoors, don’t go out', fi: 'Liikun sisällä, en ulkona' }, { v: 2, en: 'I go out', fi: 'Liikun ulkona' }] },
-  { key: 'neuro', en: 'Memory problems or low mood?', fi: 'Muistiongelmia tai mielialan laskua?', opts: [{ v: 0, en: 'Severe', fi: 'Vaikeita' }, { v: 1, en: 'Mild', fi: 'Lieviä' }, { v: 2, en: 'None', fi: 'Ei' }] },
-  { key: 'meds', en: 'Do you take more than 3 different medicines a day?', fi: 'Käytätkö yli kolmea eri lääkettä päivässä?', opts: [{ v: 0, en: 'Yes', fi: 'Kyllä' }, { v: 1, en: 'No', fi: 'En' }] },
-  { key: 'selfHealth', en: 'Compared with others your age, is your health…', fi: 'Verrattuna samanikäisiin, onko terveytesi…', opts: [{ v: 0, en: 'Not as good', fi: 'Huonompi' }, { v: 0.5, en: 'Don’t know', fi: 'En tiedä' }, { v: 1, en: 'As good', fi: 'Yhtä hyvä' }, { v: 2, en: 'Better', fi: 'Parempi' }] },
+export const G8_ITEMS: { key: 'food' | 'weight' | 'mobility' | 'neuro' | 'meds' | 'selfHealth'; en: string; fi: string; sv: string; opts: { v: number; en: string; fi: string; sv: string }[] }[] = [
+  { key: 'food', en: 'Has your food intake declined over the past 3 months?', fi: 'Onko syömäsi ruoan määrä vähentynyt viimeisen 3 kuukauden aikana?', sv: 'Har ditt matintag minskat under de senaste 3 månaderna?', opts: [{ v: 0, en: 'A lot', fi: 'Paljon', sv: 'Mycket' }, { v: 1, en: 'Somewhat', fi: 'Jonkin verran', sv: 'Något' }, { v: 2, en: 'No', fi: 'Ei', sv: 'Nej' }] },
+  { key: 'weight', en: 'Weight loss during the past 3 months?', fi: 'Painon lasku viimeisen 3 kuukauden aikana?', sv: 'Viktnedgång under de senaste 3 månaderna?', opts: [{ v: 0, en: 'More than 3 kg', fi: 'Yli 3 kg', sv: 'Mer än 3 kg' }, { v: 1, en: 'Don’t know', fi: 'En tiedä', sv: 'Vet inte' }, { v: 2, en: '1–3 kg', fi: '1–3 kg', sv: '1–3 kg' }, { v: 3, en: 'No weight loss', fi: 'Ei laskua', sv: 'Ingen viktnedgång' }] },
+  { key: 'mobility', en: 'How do you move about?', fi: 'Miten liikut?', sv: 'Hur rör du dig?', opts: [{ v: 0, en: 'Bed or chair bound', fi: 'Vuode- tai tuolipotilas', sv: 'Säng- eller stolbunden' }, { v: 1, en: 'Up indoors, don’t go out', fi: 'Liikun sisällä, en ulkona', sv: 'Rör mig inomhus, går inte ut' }, { v: 2, en: 'I go out', fi: 'Liikun ulkona', sv: 'Går ut' }] },
+  { key: 'neuro', en: 'Memory problems or low mood?', fi: 'Muistiongelmia tai mielialan laskua?', sv: 'Minnesproblem eller nedstämdhet?', opts: [{ v: 0, en: 'Severe', fi: 'Vaikeita', sv: 'Svåra' }, { v: 1, en: 'Mild', fi: 'Lieviä', sv: 'Lindriga' }, { v: 2, en: 'None', fi: 'Ei', sv: 'Nej' }] },
+  { key: 'meds', en: 'Do you take more than 3 different medicines a day?', fi: 'Käytätkö yli kolmea eri lääkettä päivässä?', sv: 'Tar du fler än 3 olika läkemedel per dag?', opts: [{ v: 0, en: 'Yes', fi: 'Kyllä', sv: 'Ja' }, { v: 1, en: 'No', fi: 'En', sv: 'Nej' }] },
+  { key: 'selfHealth', en: 'Compared with others your age, is your health…', fi: 'Verrattuna samanikäisiin, onko terveytesi…', sv: 'Jämfört med andra i din ålder, är din hälsa…', opts: [{ v: 0, en: 'Not as good', fi: 'Huonompi', sv: 'Sämre' }, { v: 0.5, en: 'Don’t know', fi: 'En tiedä', sv: 'Vet inte' }, { v: 1, en: 'As good', fi: 'Yhtä hyvä', sv: 'Lika bra' }, { v: 2, en: 'Better', fi: 'Parempi', sv: 'Bättre' }] },
 ];
 
 /** EQ-5D-5L-style health profile (dimension and level structure). Production use requires a EuroQol licence. */
-export const EQ_DIMS: { key: 'mobility' | 'selfcare' | 'activities' | 'pain' | 'anxiety'; en: string; fi: string }[] = [
-  { key: 'mobility', en: 'Walking about', fi: 'Liikkuminen' },
-  { key: 'selfcare', en: 'Washing or dressing yourself', fi: 'Peseytyminen ja pukeutuminen' },
-  { key: 'activities', en: 'Usual activities', fi: 'Tavanomaiset toiminnot' },
-  { key: 'pain', en: 'Pain or discomfort', fi: 'Kipu tai vaiva' },
-  { key: 'anxiety', en: 'Anxiety or depression', fi: 'Ahdistus tai masennus' },
+export const EQ_DIMS: { key: 'mobility' | 'selfcare' | 'activities' | 'pain' | 'anxiety'; en: string; fi: string; sv: string }[] = [
+  { key: 'mobility', en: 'Walking about', fi: 'Liikkuminen', sv: 'Rörlighet' },
+  { key: 'selfcare', en: 'Washing or dressing yourself', fi: 'Peseytyminen ja pukeutuminen', sv: 'Att tvätta eller klä sig' },
+  { key: 'activities', en: 'Usual activities', fi: 'Tavanomaiset toiminnot', sv: 'Vanliga aktiviteter' },
+  { key: 'pain', en: 'Pain or discomfort', fi: 'Kipu tai vaiva', sv: 'Smärta eller obehag' },
+  { key: 'anxiety', en: 'Anxiety or depression', fi: 'Ahdistus tai masennus', sv: 'Oro eller nedstämdhet' },
 ];
-export const EQ_LEVELS = { en: ['No problems', 'Slight', 'Moderate', 'Severe', 'Extreme / unable'], fi: ['Ei ongelmia', 'Lieviä', 'Kohtalaisia', 'Vaikeita', 'Äärimmäisiä'] };
+export const EQ_LEVELS = { en: ['No problems', 'Slight', 'Moderate', 'Severe', 'Extreme / unable'], fi: ['Ei ongelmia', 'Lieviä', 'Kohtalaisia', 'Vaikeita', 'Äärimmäisiä'], sv: ['Inga problem', 'Lätta', 'Måttliga', 'Svåra', 'Extrema / kan inte'] };

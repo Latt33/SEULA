@@ -58,6 +58,25 @@ export function Region() {
         </div>
       </div>
 
+      {/* 1b. Equity lens */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-20">
+        <div className="card p-7">
+          <p className="eyebrow mb-2">The gap is also social</p>
+          <p className="text-2xl text-deep mb-4">Public primary care: 127 days. Private or occupational care: 76 days.</p>
+          <p className="text-muted-foreground mb-4">Median days from first symptom to treatment in lymphoma. Income and occupation decide which door people use first; retirees and lower-income patients mostly start in public primary care. Low socioeconomic status means later stage, less treatment and higher mortality across most cancers in Finland.</p>
+          <p className="text-sm"><Cite k="kuitunen2026" /> · <Cite k="zai2025" /></p>
+        </div>
+        <div className="card-cream p-7">
+          <p className="eyebrow mb-2">Inside a region</p>
+          <p className="text-2xl text-deep mb-4">Start with the health stations that serve lower-income areas</p>
+          <ul className="text-muted-foreground space-y-2 list-disc ml-5 mb-4">
+            <li>Rank stations by the median income of their postcode areas (Statistics Finland Paavo, open data).</li>
+            <li>Offer the form in Finnish, Swedish and English, with a nurse phone call for anyone without a smartphone.</li>
+            <li>In production the booking system sends the link automatically, and Cancer Registry linkage reports days from symptom to test by education and income group.</li>
+          </ul>
+        </div>
+      </div>
+
       {/* 2. What to do */}
       <h2 className="text-3xl md:text-4xl text-deep mb-3">Six steps for the next quarter</h2>
       <p className="text-lg text-muted-foreground mb-8 max-w-2xl">Each step has an owner and a way to measure it. None needs new hardware or new staff.</p>

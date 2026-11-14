@@ -119,9 +119,9 @@ export function Evidence() {
       <div className="card-cream p-7 mt-8">
         <p className="font-semibold mb-2 flex items-center gap-2"><FlaskConical size={18} className="text-primary" /> What a 6-month pilot must prove</p>
         <ul className="text-sm text-muted-foreground list-disc ml-5 space-y-1">
-          <li>Completion rate by age group and language (target ≥ 60% of booked adults 40+).</li>
+          <li>Completion rate by age group, language and income area (target ≥ 60% of booked adults 40+).</li>
           <li>Flag rate and yield: cancers diagnosed within 12 months among flagged vs unflagged respondents (Cancer Registry linkage).</li>
-          <li>Days from first symptom to test, before vs after, against a comparator county.</li>
+          <li>Days from first symptom to test, before vs after, against a comparator county, and the gap between education and income groups.</li>
           <li>Voice: AUC of CPPS for laryngoscopy-confirmed lesions in patients referred to ENT.</li>
           <li>Physician minutes per visit (time-motion sample) and GP acceptance.</li>
         </ul>
@@ -151,6 +151,12 @@ const LITERATURE: [string, [string, string][]][] = [
     ['61% of total lung cancer delay was before the patient contacted primary care.', 'kotecha2021'],
     ['Median 49 days from first GP visit to chest X-ray; only 35% within the 14 days guidelines ask for.', 'cxrDelay'],
     ['A pre-consultation questionnaire cut consultations from 22 to 15 minutes.', 'stockport'],
+  ]],
+  ['The delay is unequal', [
+    ['Lymphoma in Finland: median 127 days from symptom to treatment via public primary care vs 76 via private or occupational care; income decides the first door.', 'kuitunen2026'],
+    ['More than 7 weeks from symptoms to diagnosis meant worse progression-free survival.', 'tokola2025'],
+    ['469,522 Finnish patients: low socioeconomic status was disadvantaged across incidence, stage, treatment and mortality.', 'zai2025'],
+    ['Nordic systematic review: a consistent socioeconomic gradient in stage, treatment and survival.', 'ammitzboll2022'],
   ]],
 ];
 

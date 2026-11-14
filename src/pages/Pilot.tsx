@@ -3,12 +3,12 @@ import { ArrowRight, Phone, ShieldCheck, Workflow } from 'lucide-react';
 import { Cite, Page, PageHeader } from '../components/ui';
 
 export const RECS = [
-  { id: 'R1', what: 'Send the SEULA link with every non-urgent GP booking for adults 40+', owner: 'County primary-care director, digital services', when: 'Month 0–3', kpi: '≥ 60% completion among booked adults 40+', goal: '3.5.3', cost: 'SMS + hosting, ≈ €0.50 / form' },
+  { id: 'R1', what: 'Send the SEULA link with every non-urgent GP booking for adults 40+, starting at health stations serving lower-income areas', owner: 'County primary-care director, digital services', when: 'Month 0–3', kpi: '≥ 60% completion among booked adults 40+', goal: '3.5.3', cost: 'SMS + hosting, ≈ €0.50 / form' },
   { id: 'R2', what: 'Standing order: nurses book the 2-week test (chest X-ray or FIT kit) directly from a SEULA flag', owner: 'County chief physician (local protocol based on NG12)', when: 'Month 1–3', kpi: '≥ 90% of flagged patients tested within 14 days', goal: '3.1.2', cost: 'Tests: see impact model' },
   { id: 'R3', what: 'Reserve fast-track laryngoscopy slots for persistent hoarseness age 45+', owner: 'ENT unit, central hospital', when: 'Month 2–4', kpi: 'Median ≤ 14 days to laryngoscopy', goal: '3.1.2', cost: 'Within existing ENT capacity' },
   { id: 'R4', what: 'Auto-attach G8 and EQ-5D-5L to every cancer referral for patients 70+', owner: 'Referral template owner (EHR)', when: 'Month 1–2', kpi: '≥ 80% of referrals 70+ carry G8', goal: '3.4.2 / 3.3.1', cost: 'Template change only' },
-  { id: 'R5', what: 'Report SEULA timestamps monthly to the county dashboard and the FICAN quality registry; alert at 28 days', owner: 'County knowledge management, regional FICAN', when: 'Month 3+', kpi: 'Symptom → test days published per station', goal: '3.1.2 / 3.2.2', cost: 'Analyst 0.2 FTE' },
-  { id: 'R6', what: 'Evaluate against a comparator county with Cancer Registry linkage (Findata permit)', owner: 'County + AstraZeneca + university partner', when: 'Month 0–12', kpi: 'Cancers found ≤ 12 months after a flag; stage; days saved', goal: '3.2', cost: 'Research budget' },
+  { id: 'R5', what: 'Report SEULA timestamps monthly to the county dashboard and the FICAN quality registry; alert at 28 days', owner: 'County knowledge management, regional FICAN', when: 'Month 3+', kpi: 'Symptom → test days published per station and by income group', goal: '3.1.2 / 3.2.2', cost: 'Analyst 0.2 FTE' },
+  { id: 'R6', what: 'Evaluate against a comparator county with Cancer Registry linkage (Findata permit)', owner: 'County + AstraZeneca + university partner', when: 'Month 0–12', kpi: 'Cancers found ≤ 12 months after a flag; stage; days saved, by education and income group', goal: '3.2', cost: 'Research budget' },
 ];
 
 export function Pilot() {

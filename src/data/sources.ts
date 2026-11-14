@@ -46,5 +46,9 @@ export const SOURCES: Record<string, Source> = {
   dysphoniaSurvival: { label: 'Diagnostics 2021: dysphonia-to-diagnosis interval and laryngeal cancer survival (n = 2,753)', url: 'https://mdpi.com/2075-4418/11/2/255' },
   kotecha2021: { label: 'Kotecha et al., BJGP Open 2021 (within-patient delay in lung cancer)', url: 'https://ueaeprints.uea.ac.uk/id/eprint/78161' },
   cxrDelay: { label: 'BJGP 2021: time to chest X-ray in English primary care (n = 2,102)', url: 'https://www.repository.cam.ac.uk/handle/1810/311795' },
+  kuitunen2026: { label: 'Kuitunen et al., Cancer Medicine 2026 (socioeconomic status and access to treatment in DLBCL)', url: 'https://doi.org/10.1002/cam4.71920' },
+  tokola2025: { label: 'Tokola et al., Cancer Medicine 2025 (symptom-to-diagnosis > 7 weeks, worse PFS in DLBCL)', url: 'https://doi.org/10.1002/cam4.71409' },
+  zai2025: { label: 'Zai et al., BMJ Public Health 2025 (SES and cancer in Finland, 469,522 patients)', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12551501/' },
+  ammitzboll2022: { label: 'Ammitzbøll et al., Acta Oncol 2022 (Nordic systematic review: SES, stage, treatment, survival)', url: 'https://doi.org/10.1080/0284186X.2022.2143278' },
   seula: { label: 'SEULA design rule', url: '#/evidence' },
 };
