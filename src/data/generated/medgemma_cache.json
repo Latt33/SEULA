@@ -1,1 +1,22 @@
-{}
+{
+ "00010815_006": {
+  "model": "google/medgemma-1.5-4b-it",
+  "report": "FINDINGS:\nThere is a large opacity in the right upper lobe, likely representing a mass. There is also a smaller nodule in the left lower lobe. The heart size is normal. The mediastinum is unremarkable. The lungs are otherwise clear.\n\nIMPRESSION:\nRight upper lobe mass and left lower lobe nodule. Further evaluation with CT scan is recommended.",
+  "comparison": "The current chest X-ray shows a significant mass in the right upper lobe, which is not present in the prior image. The mass appears to be causing a shift of the mediastinum to the left. The left lung appears relatively clear.",
+  "boxes": [],
+  "boxes_raw": "[]",
+  "ct_within_2_weeks": true,
+  "seconds": 6.1,
+  "recorded": "2026-11-14"
+ },
+ "00000276_000": {
+  "model": "google/medgemma-1.5-4b-it",
+  "report": "FINDINGS:\nThe heart size is mildly enlarged. The lungs are clear without focal consolidation, pleural effusion, or pneumothorax. There is no evidence of a mass, nodule, or hilar enlargement.\n\nIMPRESSION:\nNo acute cardiopulmonary process. No evidence of a mass, nodule, or hilar enlargement.",
+  "comparison": null,
+  "boxes": [],
+  "boxes_raw": "[]",
+  "ct_within_2_weeks": false,
+  "seconds": 4.2,
+  "recorded": "2026-11-14"
+ }
+}

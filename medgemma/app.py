@@ -36,10 +36,14 @@ COMPARE_PROMPT = (
     "The first image is the patient's PRIOR chest X-ray, the second is the CURRENT one. "
     "In two or three sentences, describe what is new or changed in the current image."
 )
+TARGET_PROMPT = (
+    "Radiology pre-read:\n{report}\n\nName the single most suspicious finding for lung cancer "
+    "together with its location, in at most eight words (for example: right upper lobe mass). "
+    "If there is no mass, nodule or hilar enlargement, answer NONE."
+)
 LOCATE_PROMPT = (
-    "Locate any lung mass, nodule or hilar mass on this chest X-ray. Answer only with JSON, "
-    'a list like [{{"label": "mass", "box_2d": [ymin, xmin, ymax, xmax]}}] with coordinates '
-    "normalized to 0-1000. Answer [] if there is none."
+    "Locate the {target} on this chest X-ray. Give the bounding box as [y0, x0, y1, x1], "
+    "with (y0, x0) the top-left and (y1, x1) the bottom-right corner, normalized to 0-1000."
 )
 TRIAGE_PROMPT = (
     "Radiology pre-read:\n{report}\n\nDoes this report describe a finding that needs a chest CT "
@@ -53,19 +57,28 @@ def _img(b64: str):
     return Image.open(io.BytesIO(data)).convert("RGB")
 
 
-def _boxes(text: str):
-    m = re.search(r"\[.*\]", text, re.S)
-    if not m:
-        return []
-    try:
-        items = json.loads(m.group(0))
-    except Exception:
-        return []
+def _boxes(text: str, label: str):
+    """Accept JSON with box_2d, or any [a, b, c, d] list; coordinates 0-1000 or 0-1."""
+    found = []
+    m = re.search(r"\[\s*\{.*\}\s*\]", text, re.S)
+    if m:
+        try:
+            for it in json.loads(m.group(0)):
+                b = it.get("box_2d") if isinstance(it, dict) else None
+                if isinstance(b, list) and len(b) == 4:
+                    found.append((str(it.get("label", label)), [float(v) for v in b]))
+        except Exception:
+            pass
+    if not found:
+        for nums in re.findall(r"\[\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*\]", text):
+            found.append((label, [float(v) for v in nums]))
     out = []
-    for it in items if isinstance(items, list) else []:
-        b = it.get("box_2d") if isinstance(it, dict) else None
-        if isinstance(b, list) and len(b) == 4 and all(isinstance(v, (int, float)) for v in b):
-            out.append({"label": str(it.get("label", "finding")), "box_2d": [float(v) for v in b]})
+    for lab, b in found[:3]:
+        if max(b) <= 1.0:
+            b = [v * 1000 for v in b]
+        y0, x0, y1, x1 = b
+        if y1 > y0 and x1 > x0:
+            out.append({"label": lab, "box_2d": [y0, x0, y1, x1]})
     return out
 
 
@@ -105,13 +118,19 @@ class MedGemma:
         comparison = None
         if prior_b64:
             comparison = self._generate([_img(prior_b64), cur], COMPARE_PROMPT, 200)
-        loc_raw = self._generate([cur], LOCATE_PROMPT, 200)
+        lines = self._generate([], TARGET_PROMPT.format(report=report), 24).strip().splitlines()
+        target = (lines[0].strip().strip(".*") if lines else "") or "NONE"
+        loc_raw, boxes = "", []
+        if "none" not in target.lower():
+            loc_raw = self._generate([cur], LOCATE_PROMPT.format(target=target), 400)
+            boxes = _boxes(loc_raw, target)
         triage = self._generate([], TRIAGE_PROMPT.format(report=report + ("\n" + comparison if comparison else "")), 5)
         return {
             "model": MODEL_ID,
             "report": report,
             "comparison": comparison,
-            "boxes": _boxes(loc_raw),
+            "target": target,
+            "boxes": boxes,
             "boxes_raw": loc_raw,
             "ct_within_2_weeks": triage.lower().startswith("y"),
             "seconds": round(time.time() - t0, 1),

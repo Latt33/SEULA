@@ -25,6 +25,16 @@ function Overlay({ res, nihBox, showNih }: { res?: MedGemmaResult | null; nihBox
   );
 }
 
+/** Overlap (intersection over union) between MedGemma's box and the NIH radiologist's box. */
+function iou(b: [number, number, number, number], nih: [number, number, number, number]) {
+  const [y0, x0, y1, x1] = b;
+  const [nx, ny, nw, nh] = nih.map((v) => (v / NIH) * 1000);
+  const ix = Math.max(0, Math.min(x1, nx + nw) - Math.max(x0, nx));
+  const iy = Math.max(0, Math.min(y1, ny + nh) - Math.max(y0, ny));
+  const inter = ix * iy;
+  return inter / ((x1 - x0) * (y1 - y0) + nw * nh - inter);
+}
+
 function Report({ text }: { text: string }) {
   const parts = text.replace(/\*\*/g, '').split(/\n(?=(?:FINDINGS|IMPRESSION)\b)/i);
   return (
@@ -112,6 +122,9 @@ export function XrayCard({ p, context }: { p: DemoPatient; context: string }) {
             <div><p className="text-sm text-muted-foreground mb-1">Change since the earlier X-ray</p><p className="text-[15px] text-deep leading-relaxed">{res.comparison}</p></div>
           )}
           <div><p className="text-sm text-muted-foreground mb-1">Pre-read</p><Report text={res.report} /></div>
+          {x.nihBox && res.boxes[0] && (
+            <p className="text-[15px] text-deep">MedGemma’s box overlaps the radiologist’s box by <b className="font-medium">{Math.round(iou(res.boxes[0].box_2d, x.nihBox) * 100)}%</b> (intersection over union).</p>
+          )}
           <p className="text-sm text-muted-foreground">
             {res.model.replace('google/', '')} · {res.seconds} s{res.recorded ? ` · recorded ${res.recorded}` : ''}. Pre-read only: every image is reported by a radiologist. X-ray: NIH ChestX-ray14 (NIH Clinical Center), used with attribution.
           </p>
