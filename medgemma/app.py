@@ -17,6 +17,15 @@ import base64, io, json, re, time
 import modal
 
 MODEL_ID = "google/medgemma-1.5-4b-it"
+# Public demo endpoint: only the three demo X-rays are accepted, one GPU at most, and a global
+# hourly cap, so the URL cannot be used as a free MedGemma API. Remove the allowlist for a pilot
+# deployment inside the county's own network.
+DEMO_IMAGES_SHA256 = {
+    "a90c96202f1b7a3e68764be7e13ed2b5daf465061551b87227fbbf0740ac062e",  # 00000276_000.jpg
+    "4a04247af19141745c22952b5ad633138d33cad3c7ed663ee2f01eed0524f5d8",  # 00010815_003.jpg
+    "19eebe9527ea3d608dbf17f8e12788f9991d1e5ac4f6156aed5d7ab9efc98755",  # 00010815_006.jpg
+}
+READS_PER_HOUR = 40
 ALLOWED_ORIGINS = ["https://latt33.github.io", "http://localhost:5173", "http://localhost:4173"]
 
 image = (
@@ -24,6 +33,7 @@ image = (
     .pip_install("torch==2.6.0", "transformers>=4.57", "accelerate", "pillow", "fastapi[standard]")
 )
 cache = modal.Volume.from_name("seula-hf-cache", create_if_missing=True)
+quota = modal.Dict.from_name("seula-medgemma-quota", create_if_missing=True)
 app = modal.App("seula-medgemma")
 
 READ_PROMPT = (
@@ -83,7 +93,8 @@ def _boxes(text: str, label: str):
 
 
 @app.cls(gpu=["L4", "A10G", "L40S", "A100-40GB"], image=image, volumes={"/root/.cache/huggingface": cache},
-         secrets=[modal.Secret.from_name("huggingface")], scaledown_window=900, timeout=900)
+         secrets=[modal.Secret.from_name("huggingface")], scaledown_window=900, timeout=900,
+         max_containers=1)
 class MedGemma:
     @modal.enter()
     def load(self):
@@ -140,7 +151,7 @@ class MedGemma:
         }
 
 
-@app.function(image=image, timeout=900)
+@app.function(image=image, timeout=900, max_containers=1)
 @modal.asgi_app()
 def web():
     from fastapi import FastAPI
@@ -164,8 +175,22 @@ def web():
         MedGemma().ping.spawn()  # starts a GPU container and loads the model
         return {"started": True}
 
+    def _sha(b64: str) -> str:
+        import hashlib
+        return hashlib.sha256(base64.b64decode(b64.split(",")[-1])).hexdigest()
+
     @api.post("/read")
     def read(req: Req):
-        return MedGemma().read.remote(req.image_b64, req.prior_b64, req.context)
+        from fastapi import HTTPException
+        if len(req.image_b64) > 3_000_000 or (req.prior_b64 and len(req.prior_b64) > 3_000_000):
+            raise HTTPException(413, "Image too large")
+        if _sha(req.image_b64) not in DEMO_IMAGES_SHA256 or (req.prior_b64 and _sha(req.prior_b64) not in DEMO_IMAGES_SHA256):
+            raise HTTPException(403, "This public demo only reads the SEULA demo X-rays")
+        bucket = time.strftime("%Y%m%d%H")
+        used = quota.get(bucket, 0)
+        if used >= READS_PER_HOUR:
+            raise HTTPException(429, "Hourly demo limit reached, try again later")
+        quota[bucket] = used + 1
+        return MedGemma().read.remote(req.image_b64, req.prior_b64, req.context[:600])
 
     return api
