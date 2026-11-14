@@ -276,15 +276,11 @@ function WhyToast() {
   };
   if (!show) return null;
   return (
-    <div role="status" className="fixed z-50 bottom-4 left-4 right-4 sm:right-auto sm:max-w-sm card p-5 shadow-[0_12px_40px_-12px_rgba(29,28,26,0.35)] animate-[fadeUp_.4s_ease-out]">
-      <button onClick={close} aria-label="Close" className="absolute top-3 right-3 text-muted-foreground hover:text-deep"><X size={18} /></button>
-      <div className="flex gap-3 pr-6">
+    <div role="status" className="fixed z-50 bottom-4 left-4 right-4 sm:right-auto sm:max-w-sm card p-4 shadow-[0_12px_40px_-12px_rgba(29,28,26,0.35)] animate-[fadeUp_.4s_ease-out]">
+      <button onClick={close} aria-label="Close" className="absolute top-1/2 -translate-y-1/2 right-3 text-muted-foreground hover:text-deep"><X size={18} /></button>
+      <div className="flex items-center gap-3 pr-6">
         <span className="w-9 h-9 rounded-full bg-sage text-primary flex items-center justify-center shrink-0"><MapPin size={17} /></span>
-        <div>
-          <p className="font-medium text-deep mb-1">New here? Start with why it matters</p>
-          <p className="text-[15px] text-muted-foreground leading-snug mb-3">Public primary care is the slowest route to cancer treatment, and it serves the people with the least. See where SEULA helps first.</p>
-          <Link to="/region" onClick={close} className="inline-flex items-center gap-1.5 text-primary font-medium hover:underline">Why it matters <ArrowRight size={15} /></Link>
-        </div>
+        <Link to="/region" onClick={close} className="inline-flex items-center gap-1.5 text-primary font-medium hover:underline">Why this matters? <ArrowRight size={15} /></Link>
       </div>
     </div>
   );
