@@ -333,8 +333,8 @@ export const SYMPTOM_LABEL: Record<SymptomKey, string> = {
 export const DURATION_LABEL: Record<Duration, string> = { lt3w: '< 3 weeks', '3to6w': '3–6 weeks', gt6w: '> 6 weeks' };
 
 export const LEVEL_META: Record<Level, { label: string; short: string; color: string; bg: string }> = {
-  urgent: { label: 'Suspected-cancer pathway', short: 'Urgent', color: '#b42318', bg: '#fef3f2' },
-  investigate: { label: 'Direct-access test within 2 weeks', short: 'Investigate', color: '#b54708', bg: '#fffaeb' },
-  review: { label: 'Review at visit', short: 'Review', color: '#175cd3', bg: '#eff8ff' },
-  info: { label: 'Routine', short: 'Routine', color: '#475467', bg: '#f2f4f7' },
+  urgent: { label: 'Suspected-cancer pathway', short: 'Urgent', color: '#a8483f', bg: '#f9ece9' },
+  investigate: { label: 'Test within 2 weeks', short: 'Test', color: '#8f6420', bg: '#f8f1e3' },
+  review: { label: 'Ask at the visit', short: 'Ask', color: '#3e6a93', bg: '#eaf1f7' },
+  info: { label: 'Routine', short: 'Routine', color: '#5c6864', bg: '#eef1ef' },
 };

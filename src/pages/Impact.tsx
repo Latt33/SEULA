@@ -18,9 +18,9 @@ export function Impact() {
   const breakEvenMin = (r.testCost + r.runCost) / (p.questionnaires * p.costPerMinute);
 
   return (
-    <Page>
-      <PageHeader eyebrow="Economics · every assumption is a slider" title="Two streams of value, one of them certain.">
-        Doctor time saved on history-taking pays for the system on its own. Earlier detection is the upside, and its size is the main thing a pilot must measure. Assumptions are marked, sourced values are linked.
+    <Page tint>
+      <PageHeader eyebrow="For regions · costs and savings" title="What it costs, and what it saves">
+        Time saved on taking histories pays for the system. Catching cancer earlier is the upside, and a pilot will measure how big it is. Move any slider to test an assumption.
       </PageHeader>
 
       <div className="flex flex-wrap gap-2 mb-6">
@@ -47,7 +47,7 @@ export function Impact() {
 
         <div className="space-y-5">
           <div className="card p-6">
-            <p className="eyebrow mb-4">Stream 1 · Workflow (certain)</p>
+            <p className="eyebrow mb-4">Doctor time (certain)</p>
             <div className="grid grid-cols-3 gap-4">
               <Tile v={fmt(r.physicianHours)} l="physician hours freed / year" />
               <Tile v={fmt(r.fte, 1)} l="physician FTE equivalent" />
@@ -57,13 +57,13 @@ export function Impact() {
           </div>
 
           <div className="card p-6">
-            <p className="eyebrow mb-4">Stream 2 · Earlier detection (to be measured)</p>
+            <p className="eyebrow mb-4">Earlier detection (to be measured)</p>
             <div className="grid grid-cols-3 gap-4">
               <Tile v={fmt(r.flagged)} l="patients sent for a 2-week test" />
               <Tile v={fmt(r.cancersFlagged)} l="cancers among them" />
               <Tile v={fmt(r.earlier, 0)} l="found at an earlier stage" />
             </div>
-            <div className="mt-5 rounded-lg bg-primary/10 p-4 flex items-baseline gap-3">
+            <div className="mt-5 rounded-2xl bg-sage p-5 flex items-baseline gap-3">
               <span className="text-4xl font-bold text-primary tnum">{fmt(r.survivors, 0)}</span>
               <span className="text-sm">additional people alive at 5 years, per year of operation</span>
             </div>
@@ -72,13 +72,13 @@ export function Impact() {
           <div className="card p-6">
             <p className="eyebrow mb-4">Budget, per year</p>
             <Bars rows={[
-              { l: 'Physician time freed', v: r.timeValue, c: '#2f6fb5' },
-              { l: 'Extra 2-week tests', v: -r.testCost, c: '#d97757' },
-              { l: 'Running SEULA', v: -r.runCost, c: '#d97757' },
+              { l: 'Physician time freed', v: r.timeValue, c: '#3d79b8' },
+              { l: 'Extra 2-week tests', v: -r.testCost, c: '#c4843f' },
+              { l: 'Running SEULA', v: -r.runCost, c: '#c4843f' },
             ]} />
             <div className="flex justify-between items-baseline border-t border-line pt-3 mt-3">
               <span className="font-semibold">Net</span>
-              <span className={`text-2xl font-bold tnum ${r.net >= 0 ? 'text-emerald-700' : 'text-[#b42318]'}`}>{eur(r.net)}</span>
+              <span className={`text-2xl font-bold tnum ${r.net >= 0 ? 'text-emerald-700' : 'text-[#a8483f]'}`}>{eur(r.net)}</span>
             </div>
             {r.net < 0 && <p className="text-xs text-muted-foreground mt-1">Net cost per additional 5-year survivor: <b className="tnum">€{fmt(r.costPerSurvivor)}</b></p>}
           </div>
@@ -108,7 +108,7 @@ export function Impact() {
 function Tile({ v, l, accent }: { v: string; l: string; accent?: boolean }) {
   return (
     <div>
-      <div className={`text-2xl md:text-3xl font-bold tnum ${accent ? 'text-[#2f6fb5]' : ''}`}>{v}</div>
+      <div className={`text-2xl md:text-3xl font-bold tnum ${accent ? 'text-[#3d79b8]' : ''}`}>{v}</div>
       <div className="text-xs text-muted-foreground leading-tight mt-1">{l}</div>
     </div>
   );

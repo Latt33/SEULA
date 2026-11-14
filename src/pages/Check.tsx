@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Lock, Mic, PhoneCall, ShieldCheck } from 'lucide-react';
-import { Logo } from '../components/ui';
+import { Wordmark } from '../components/ui';
 import { Recorder } from '../components/Recorder';
 import { Answers, Duration, SymptomKey } from '../engine/questionnaire';
 import { analyzeReadSpeech, analyzeSustainedVowel, SpeechFeatures, VoiceFeatures } from '../engine/voice';
@@ -23,13 +23,13 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
-const inputCls = 'w-full rounded-xl border border-line bg-white px-4 py-3 text-lg tnum focus:outline-none focus:ring-2 focus:ring-primary/40';
+const inputCls = 'w-full rounded-2xl border border-line bg-white px-4 py-3 text-lg tnum focus:outline-none focus:ring-2 focus:ring-primary/30';
 
 function Choice({ options, value, onChange }: { options: { v: string | number; label: string }[]; value: unknown; onChange: (v: never) => void }) {
   return (
     <div className="grid gap-2">
       {options.map((o) => (
-        <button key={String(o.v)} type="button" onClick={() => onChange(o.v as never)} className={`text-left px-4 py-3 rounded-xl border transition-colors ${value === o.v ? 'border-primary bg-primary/10 font-medium' : 'border-line bg-white hover:bg-muted/40'}`}>
+        <button key={String(o.v)} type="button" onClick={() => onChange(o.v as never)} className={`text-left px-5 py-3.5 rounded-2xl border transition-colors ${value === o.v ? 'border-primary bg-sage text-deep font-medium' : 'border-line bg-white hover:bg-mist'}`}>
           {o.label}
         </button>
       ))}
@@ -111,21 +111,18 @@ export function Check() {
   const redFlag = !!(a.symptoms.haemoptysis || a.symptoms.dysphagia);
 
   return (
-    <div className="min-h-[100dvh] bg-background flex flex-col">
-      <header className="px-4 h-14 flex items-center justify-between border-b border-line bg-background/90 sticky top-0 z-10 backdrop-blur">
-        <Link to="/" className="flex items-center gap-2">
-          <Logo size={24} />
-          <span className="font-bold">SEULA</span>
-        </Link>
+    <div className="min-h-[100dvh] bg-mist flex flex-col">
+      <header className="px-5 h-16 flex items-center justify-between border-b border-line bg-white/90 sticky top-0 z-10 backdrop-blur">
+        <Link to="/"><Wordmark /></Link>
         <div className="flex items-center gap-1 text-sm">
           {(['fi', 'en'] as Lang[]).map((l) => (
-            <button key={l} onClick={() => setLang(l)} className={`px-2.5 py-1 rounded-lg ${lang === l ? 'bg-white border border-line font-semibold' : 'text-muted-foreground'}`}>
+            <button key={l} onClick={() => setLang(l)} className={`px-3 py-1 rounded-full ${lang === l ? 'bg-sage text-deep font-medium' : 'text-muted-foreground'}`}>
               {l.toUpperCase()}
             </button>
           ))}
         </div>
       </header>
-      <div className="h-1 bg-muted">
+      <div className="h-1 bg-sage">
         <div className="h-full bg-primary transition-all duration-500" style={{ width: `${progress * 100}%` }} />
       </div>
 
@@ -133,19 +130,19 @@ export function Check() {
         {cur === 'intro' && (
           <div>
             <p className="eyebrow mb-3">Terveysasema · Health centre</p>
-            <h1 className="text-3xl mb-4">{t.title}</h1>
+            <h1 className="text-4xl text-deep mb-4">{t.title}</h1>
             <p className="prose-serif text-lg text-muted-foreground leading-relaxed mb-8">{t.intro}</p>
             <div className="card p-4 mb-8 space-y-3 text-sm">
-              <div className="flex gap-3 items-start"><Lock size={18} className="text-brand-blue mt-0.5 shrink-0" /><span>{lang === 'fi' ? 'Ääni käsitellään vain tässä laitteessa.' : 'Audio is processed only on this device.'}</span></div>
-              <div className="flex gap-3 items-start"><ShieldCheck size={18} className="text-brand-blue mt-0.5 shrink-0" /><span>{lang === 'fi' ? 'Kysymykset perustuvat kansainvälisiin, tutkittuihin mittareihin.' : 'Questions come from validated, international instruments.'}</span></div>
-              <div className="flex gap-3 items-start"><PhoneCall size={18} className="text-brand-blue mt-0.5 shrink-0" /><span>{lang === 'fi' ? 'Kiireellisissä asioissa soita 116117 tai hätätilanteessa 112.' : 'If urgent, call 116117, or 112 in an emergency.'}</span></div>
+              <div className="flex gap-3 items-start"><Lock size={18} className="text-primary mt-0.5 shrink-0" /><span>{lang === 'fi' ? 'Ääni käsitellään vain tässä laitteessa.' : 'Audio is processed only on this device.'}</span></div>
+              <div className="flex gap-3 items-start"><ShieldCheck size={18} className="text-primary mt-0.5 shrink-0" /><span>{lang === 'fi' ? 'Kysymykset perustuvat kansainvälisiin, tutkittuihin mittareihin.' : 'Questions come from validated, international instruments.'}</span></div>
+              <div className="flex gap-3 items-start"><PhoneCall size={18} className="text-primary mt-0.5 shrink-0" /><span>{lang === 'fi' ? 'Kiireellisissä asioissa soita 116117 tai hätätilanteessa 112.' : 'If urgent, call 116117, or 112 in an emergency.'}</span></div>
             </div>
           </div>
         )}
 
         {cur === 'about' && (
           <div>
-            <h2 className="text-2xl mb-6">{t.aboutYou}</h2>
+            <h2 className="text-3xl text-deep mb-6">{t.aboutYou}</h2>
             <Field label={t.age}><input className={inputCls} type="number" inputMode="numeric" value={a.age ?? ''} onChange={(e) => set({ age: e.target.value ? +e.target.value : undefined })} /></Field>
             <Field label={t.sex}><Choice options={[{ v: 'f', label: t.female }, { v: 'm', label: t.male }]} value={a.sex} onChange={(v) => set({ sex: v })} /></Field>
             <div className="grid grid-cols-2 gap-3">
@@ -157,7 +154,7 @@ export function Check() {
 
         {cur === 'smoking' && (
           <div>
-            <h2 className="text-2xl mb-6">{t.smokingT}</h2>
+            <h2 className="text-3xl text-deep mb-6">{t.smokingT}</h2>
             <Field label=""><Choice options={[{ v: 'never', label: t.never }, { v: 'former', label: t.former }, { v: 'current', label: t.current }]} value={a.smoking} onChange={(v) => set({ smoking: v })} /></Field>
             {(a.smoking === 'former' || a.smoking === 'current') && (
               <>
@@ -187,7 +184,7 @@ export function Check() {
 
         {cur === 'symptoms' && (
           <div>
-            <h2 className="text-2xl mb-2">{t.symptomsT}</h2>
+            <h2 className="text-3xl text-deep mb-2">{t.symptomsT}</h2>
             <p className="text-sm text-muted-foreground mb-5">{t.symptomsHint}</p>
             {SYMPTOM_GROUPS.map((g, gi) => (
               <div key={gi} className="card mb-3 divide-y divide-line">
@@ -202,7 +199,7 @@ export function Check() {
                       {on && (
                         <div className="grid grid-cols-3 gap-1.5 mt-2 ml-8">
                           {(['lt3w', '3to6w', 'gt6w'] as Duration[]).map((d) => (
-                            <button key={d} onClick={() => set({ symptoms: { ...a.symptoms, [k]: d } })} className={`text-xs py-1.5 rounded-lg border ${a.symptoms[k] === d ? 'border-primary bg-primary/10 font-semibold' : 'border-line bg-white'}`}>
+                            <button key={d} onClick={() => set({ symptoms: { ...a.symptoms, [k]: d } })} className={`text-xs py-1.5 rounded-lg border ${a.symptoms[k] === d ? 'border-primary bg-sage text-deep font-medium' : 'border-line bg-white'}`}>
                               {t.dur[d]}
                             </button>
                           ))}
@@ -221,14 +218,14 @@ export function Check() {
 
         {cur === 'vhi' && (
           <div>
-            <h2 className="text-2xl mb-2">{t.vhiT}</h2>
+            <h2 className="text-3xl text-deep mb-2">{t.vhiT}</h2>
             <p className="text-sm text-muted-foreground mb-5">{t.vhiHint}</p>
             {VHI10[lang].map((q, i) => (
               <div key={i} className="mb-4">
                 <p className="text-sm mb-2">{i + 1}. {q}</p>
                 <div className="grid grid-cols-5 gap-1">
                   {t.vhiScale.map((lab, v) => (
-                    <button key={v} title={lab} onClick={() => { const arr = [...(a.vhi10 ?? Array(10).fill(undefined))]; arr[i] = v; set({ vhi10: arr }); }} className={`py-2 rounded-lg border text-sm ${a.vhi10?.[i] === v ? 'border-primary bg-primary/10 font-semibold' : 'border-line bg-white'}`}>{v}</button>
+                    <button key={v} title={lab} onClick={() => { const arr = [...(a.vhi10 ?? Array(10).fill(undefined))]; arr[i] = v; set({ vhi10: arr }); }} className={`py-2 rounded-lg border text-sm ${a.vhi10?.[i] === v ? 'border-primary bg-sage text-deep font-medium' : 'border-line bg-white'}`}>{v}</button>
                   ))}
                 </div>
               </div>
@@ -239,7 +236,7 @@ export function Check() {
 
         {cur === 'g8' && (
           <div>
-            <h2 className="text-2xl mb-2">{t.g8T}</h2>
+            <h2 className="text-3xl text-deep mb-2">{t.g8T}</h2>
             <p className="text-sm text-muted-foreground mb-5">{t.g8Hint}</p>
             {G8_ITEMS.map((it) => (
               <div key={it.key} className="mb-5">
@@ -252,14 +249,14 @@ export function Check() {
 
         {cur === 'eq' && (
           <div>
-            <h2 className="text-2xl mb-2">{t.eqT}</h2>
+            <h2 className="text-3xl text-deep mb-2">{t.eqT}</h2>
             <p className="text-sm text-muted-foreground mb-5">{t.eqHint}</p>
             {EQ_DIMS.map((d) => (
               <div key={d.key} className="mb-4">
                 <p className="text-sm font-medium mb-2">{d[lang]}</p>
                 <div className="grid grid-cols-5 gap-1">
                   {EQ_LEVELS[lang].map((lab, i) => (
-                    <button key={i} onClick={() => set({ eq5d: { ...a.eq5d, [d.key]: (i + 1) as 1 } })} className={`py-2 px-1 rounded-lg border text-[11px] leading-tight ${a.eq5d?.[d.key] === i + 1 ? 'border-primary bg-primary/10 font-semibold' : 'border-line bg-white'}`}>{lab}</button>
+                    <button key={i} onClick={() => set({ eq5d: { ...a.eq5d, [d.key]: (i + 1) as 1 } })} className={`py-2 px-1 rounded-lg border text-[11px] leading-tight ${a.eq5d?.[d.key] === i + 1 ? 'border-primary bg-sage text-deep font-medium' : 'border-line bg-white'}`}>{lab}</button>
                   ))}
                 </div>
               </div>
@@ -273,7 +270,7 @@ export function Check() {
 
         {cur === 'voice' && (
           <div>
-            <h2 className="text-2xl mb-2 flex items-center gap-2"><Mic size={22} className="text-primary" /> {t.voiceT}</h2>
+            <h2 className="text-3xl text-deep mb-2 flex items-center gap-2"><Mic size={22} className="text-primary" /> {t.voiceT}</h2>
             <div className="card p-5 mb-4">
               <p className="text-sm mb-1 font-semibold">1 / 2</p>
               <p className="prose-serif text-muted-foreground mb-2">{t.vowelHint}</p>
@@ -292,7 +289,7 @@ export function Check() {
 
         {cur === 'words' && (
           <div>
-            <h2 className="text-2xl mb-2">{t.ownWordsT}</h2>
+            <h2 className="text-3xl text-deep mb-2">{t.ownWordsT}</h2>
             <p className="text-sm text-muted-foreground mb-4">{t.ownWordsHint}</p>
             <textarea className={`${inputCls} text-base min-h-[160px] prose-serif`} value={a.freeText ?? ''} onChange={(e) => set({ freeText: e.target.value })} />
             {hasDictation && (
@@ -306,7 +303,7 @@ export function Check() {
 
         {cur === 'done' && (
           <div className="text-center pt-8">
-            <div className="mx-auto w-16 h-16 rounded-full bg-emerald-50 border-2 border-emerald-600 flex items-center justify-center mb-6"><ShieldCheck className="text-emerald-700" size={30} /></div>
+            <div className="mx-auto w-20 h-20 rounded-full bg-sage flex items-center justify-center mb-6"><ShieldCheck className="text-primary" size={34} /></div>
             <h2 className="text-3xl mb-3">{t.doneT}</h2>
             <p className="prose-serif text-lg text-muted-foreground mb-8">{t.doneText}</p>
             {redFlag && <div className="rounded-xl border border-red-200 bg-red-50 text-red-800 p-4 text-sm mb-6 text-left">{t.redFlag}</div>}

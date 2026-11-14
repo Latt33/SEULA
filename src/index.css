@@ -2,54 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* SEULA: calm clinical palette. Deep sage instead of saturated green, warm cream cards, mist backgrounds. */
 :root {
-  --background: #faf8f5;
-  --foreground: #1a1a18;
-  --muted: #e8e4de;
-  --muted-foreground: #6b6560;
-  --primary: #d97757;
-  --primary-foreground: #faf8f5;
-  --brand-blue: #2f6fb5;
-  --line: #ece8e2;
-  --background-rgb: 250 248 245;
-  --foreground-rgb: 26 26 24;
-  --muted-rgb: 232 228 222;
-  --muted-foreground-rgb: 107 101 96;
-  --primary-rgb: 217 119 87;
-  --brand-blue-rgb: 47 111 181;
-  --line-rgb: 236 232 226;
+  --background-rgb: 255 255 255;
+  --foreground-rgb: 33 45 41;        /* ink, slightly green */
+  --muted-rgb: 237 241 238;          /* pale sage-grey */
+  --muted-foreground-rgb: 92 104 100;
+  --primary-rgb: 63 117 101;         /* calm sage #3f7565 */
+  --deep-rgb: 44 82 72;              /* band colour #2c5248 */
+  --sage-rgb: 223 234 227;           /* soft sage #dfeae3 */
+  --cream-rgb: 246 242 235;          /* warm cream #f6f2eb */
+  --mist-rgb: 245 248 246;           /* page tint #f5f8f6 */
+  --brand-blue-rgb: 79 121 166;
+  --line-rgb: 226 232 228;
+  --primary: rgb(var(--primary-rgb));
+  --brand-blue: rgb(var(--brand-blue-rgb));
+  --foreground: rgb(var(--foreground-rgb));
 }
 
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
-  background-color: var(--background);
-  color: var(--foreground);
+  background: rgb(var(--background-rgb));
+  color: rgb(var(--foreground-rgb));
 }
-h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; }
-h1 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.035em; font-weight: 550; }
-.prose-serif { font-family: 'Lora', Georgia, serif; }
+h1, h2, h3, h4 { font-weight: 500; line-height: 1.15; letter-spacing: -0.02em; }
+h1 { letter-spacing: -0.03em; }
+.prose-serif { font-family: inherit; }
 .tnum { font-variant-numeric: tabular-nums; }
 
-.card { @apply bg-white rounded-xl border border-line; }
-.eyebrow { @apply text-xs font-medium text-muted-foreground uppercase tracking-wider; }
-.btn { @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold transition-all; }
-.btn-primary { @apply btn text-primary-foreground bg-primary hover:bg-primary/90 shadow-sm hover:shadow-md; }
-.btn-ghost { @apply btn bg-white border border-line text-foreground hover:bg-muted/50; }
-.chip { @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium; }
+.card { @apply bg-white rounded-2xl border border-line; }
+.card-cream { @apply bg-cream rounded-2xl; }
+.eyebrow { @apply text-sm font-medium text-primary; }
+.btn { @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium transition-colors; }
+.btn-primary { @apply btn bg-primary text-white hover:bg-deep; }
+.btn-ghost { @apply btn bg-white border border-line text-foreground hover:bg-mist; }
+.btn-light { @apply btn bg-white text-deep hover:bg-cream; }
+.chip { @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium; }
+.band { @apply bg-deep text-white rounded-4xl; }
 
-/* Breathing hero, carried over from PUHELU */
-@keyframes breathe-outer { 0%,100% { transform: scale(0.85); opacity: .22 } 50% { transform: scale(1); opacity: .4 } }
-@keyframes breathe-inner { 0%,100% { transform: scale(1); opacity: .25 } 50% { transform: scale(.88); opacity: .12 } }
-.hero-breath { position: absolute; inset: 0; overflow: hidden; pointer-events: none;
-  mask-image: radial-gradient(ellipse 80% 90% at 50% 40%, white, transparent);
-  -webkit-mask-image: radial-gradient(ellipse 80% 90% at 50% 40%, white, transparent); }
-.hero-breath::before, .hero-breath::after { content: ''; position: absolute; border-radius: 50%; top: 50%; left: 50%; translate: -50% -50%; }
-.hero-breath::before { width: 800px; height: 800px; background: radial-gradient(circle, var(--primary) 0%, transparent 70%); animation: breathe-outer 6s ease-in-out infinite; }
-.hero-breath::after { width: 500px; height: 500px; background: radial-gradient(circle, var(--brand-blue) 0%, transparent 70%); animation: breathe-inner 6s ease-in-out infinite; animation-delay: -1.5s; }
-
-@keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(217,119,87,.45) } 100% { box-shadow: 0 0 0 22px rgba(217,119,87,0) } }
+/* Breathing circle (voice step and closing section) */
+@keyframes breathe { 0%,100% { transform: scale(.82) } 50% { transform: scale(1) } }
+.breathe { animation: breathe 6s ease-in-out infinite; }
+@keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(63,117,101,.4) } 100% { box-shadow: 0 0 0 22px rgba(63,117,101,0) } }
 .rec-pulse { animation: pulse-ring 1.4s ease-out infinite; }
-input[type=range] { accent-color: var(--primary); }
+input[type=range] { accent-color: rgb(var(--primary-rgb)); }
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }

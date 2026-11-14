@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Phone, ShieldCheck, Workflow } from 'lucide-react';
 import { Cite, Page, PageHeader } from '../components/ui';
 
-const RECS = [
+export const RECS = [
   { id: 'R1', what: 'Send the SEULA link with every non-urgent GP booking for adults 40+', owner: 'County primary-care director, digital services', when: 'Month 0–3', kpi: '≥ 60% completion among booked adults 40+', goal: '3.5.3', cost: 'SMS + hosting, ≈ €0.50 / form' },
   { id: 'R2', what: 'Standing order: nurses book the 2-week test (chest X-ray or FIT kit) directly from a SEULA flag', owner: 'County chief physician (local protocol based on NG12)', when: 'Month 1–3', kpi: '≥ 90% of flagged patients tested within 14 days', goal: '3.1.2', cost: 'Tests: see impact model' },
   { id: 'R3', what: 'Reserve fast-track laryngoscopy slots for persistent hoarseness age 45+', owner: 'ENT unit, central hospital', when: 'Month 2–4', kpi: 'Median ≤ 14 days to laryngoscopy', goal: '3.1.2', cost: 'Within existing ENT capacity' },

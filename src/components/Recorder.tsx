@@ -71,7 +71,7 @@ export function Recorder({ maxSeconds, onDone, labels }: { maxSeconds: number; o
           <Square size={30} fill="white" />
         </button>
       ) : state === 'done' ? (
-        <div className="w-24 h-24 rounded-full bg-emerald-50 border-2 border-emerald-600 text-emerald-700 flex items-center justify-center">
+        <div className="w-24 h-24 rounded-full bg-sage text-primary flex items-center justify-center">
           <CheckCircle2 size={40} />
         </div>
       ) : (
@@ -79,7 +79,7 @@ export function Recorder({ maxSeconds, onDone, labels }: { maxSeconds: number; o
           <Mic size={36} />
         </button>
       )}
-      <div className="h-2 w-48 bg-muted rounded-full overflow-hidden">
+      <div className="h-2 w-48 bg-sage rounded-full overflow-hidden">
         <div className="h-full bg-primary transition-all" style={{ width: `${state === 'rec' ? Math.min(100, level * 180) : 0}%` }} />
       </div>
       <div className="text-sm text-muted-foreground tnum">

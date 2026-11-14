@@ -21,9 +21,9 @@ const FEAT_LABEL: Record<string, [string, string]> = {
 
 export function Evidence() {
   return (
-    <Page>
-      <PageHeader eyebrow="Evidence · reproducible in /analysis" title="Can text and speech recognise cancer cases?">
-        Honest answer: they can find the people who need a closer look, using rules and measures already validated in clinics. Voice does not diagnose cancer. It detects an abnormal larynx, which is where laryngeal cancer is found. Below is what we tested tonight and what a pilot must still prove.
+    <Page tint>
+      <PageHeader eyebrow="Evidence" title="Does it work?">
+        SEULA finds the people who need a closer look, using rules and measures already validated in clinics. It does not diagnose cancer. Here is what we tested, and what a pilot still has to show.
       </PageHeader>
 
       <Claim n={1} title="The questionnaire uses only validated instruments" ok>
@@ -62,12 +62,12 @@ export function Evidence() {
             <p className="text-sm font-semibold mb-1">CPPS: Praat vs SEULA (held-out)</p>
             <ResponsiveContainer width="100%" height={240}>
               <ScatterChart margin={{ top: 8, right: 8, bottom: 20, left: 0 }}>
-                <CartesianGrid stroke="#ece8e2" />
+                <CartesianGrid stroke="#e2e8e4" />
                 <XAxis type="number" dataKey="x" name="Praat" unit=" dB" domain={['auto', 'auto']} tick={{ fontSize: 11 }} label={{ value: 'Praat CPPS (dB)', position: 'insideBottom', offset: -10, fontSize: 11 }} />
                 <YAxis type="number" dataKey="y" name="SEULA" unit=" dB" domain={['auto', 'auto']} tick={{ fontSize: 11 }} width={50} />
                 <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(v) => Number(v).toFixed(2)} />
-                <ReferenceLine x={14.45} stroke="#b42318" strokeDasharray="4 3" />
-                <Scatter data={V.synthetic.features.cpps.points.map(([x, y]) => ({ x, y }))} fill="#2f6fb5" fillOpacity={0.7} />
+                <ReferenceLine x={14.45} stroke="#a8483f" strokeDasharray="4 3" />
+                <Scatter data={V.synthetic.features.cpps.points.map(([x, y]) => ({ x, y }))} fill="#3d79b8" fillOpacity={0.7} />
               </ScatterChart>
             </ResponsiveContainer>
             <p className="text-xs text-muted-foreground">Dashed line: published dysphonia cut-off 14.45 dB <Cite k="murton2020" />. Both tools put nearly every voice on the same side of it.</p>
@@ -96,7 +96,7 @@ export function Evidence() {
         <p className="text-sm text-muted-foreground mt-3">Design choice: text never changes the triage level. It only shows “mentioned but not ticked” so the doctor asks. A missed mention costs nothing extra; a false one costs a question.</p>
       </Claim>
 
-      <div className="card p-6 mt-8">
+      <div className="card-cream p-7 mt-8">
         <p className="font-semibold mb-2 flex items-center gap-2"><FlaskConical size={18} className="text-primary" /> What a 6-month pilot must prove</p>
         <ul className="text-sm text-muted-foreground list-disc ml-5 space-y-1">
           <li>Completion rate by age group and language (target ≥ 60% of booked adults 40+).</li>
@@ -112,11 +112,11 @@ export function Evidence() {
 
 function Claim({ n, title, ok, children }: { n: number; title: string; ok: boolean; children: React.ReactNode }) {
   return (
-    <section className="card p-5 md:p-6 mb-5">
-      <h2 className="text-xl mb-4 flex items-start gap-3">
-        <span className="font-display text-primary text-2xl leading-none">{n}</span>
+    <section className="card p-7 mb-6">
+      <h2 className="text-2xl text-deep mb-5 flex items-center gap-3">
+        <span className="w-8 h-8 rounded-full bg-sage text-deep flex items-center justify-center text-base font-medium shrink-0">{n}</span>
         <span className="flex-1">{title}</span>
-        {ok ? <CheckCircle2 className="text-emerald-700 shrink-0" size={20} /> : <CircleAlert className="text-amber-600 shrink-0" size={20} />}
+        {ok ? <CheckCircle2 className="text-primary shrink-0" size={20} /> : <CircleAlert className="text-[#c4843f] shrink-0" size={20} />}
       </h2>
       {children}
     </section>
@@ -153,24 +153,24 @@ function AucExplorer() {
       </div>
       <ResponsiveContainer width="100%" height={260}>
         <LineChart data={data} margin={{ top: 10, right: 16, bottom: 20, left: 0 }}>
-          <CartesianGrid stroke="#ece8e2" />
+          <CartesianGrid stroke="#e2e8e4" />
           <XAxis dataKey="d" type="number" domain={[0, 2.5]} ticks={[0, 0.5, 1, 1.5, 2, 2.5]} tick={{ fontSize: 11 }} label={{ value: 'Voice effect size d', position: 'insideBottom', offset: -10, fontSize: 11 }} />
           <YAxis domain={[0.5, 1]} ticks={[0.5, 0.6, 0.7, 0.8, 0.9, 1]} tick={{ fontSize: 11 }} width={40} />
           <Tooltip formatter={(v) => Number(v).toFixed(3)} labelFormatter={(d) => `d = ${d}`} />
           <Legend verticalAlign="top" height={28} iconType="plainline" />
-          <ReferenceLine x={0} stroke="#7a52b3" strokeDasharray="4 3" label={{ value: 'cancer vs benign lesion', position: 'insideTopLeft', fontSize: 10, fill: '#6b6560' }} />
-          <ReferenceLine x={+dDys.toFixed(2)} stroke="#7a52b3" strokeDasharray="4 3" label={{ value: 'dysphonia vs normal', position: 'insideTopRight', fontSize: 10, fill: '#6b6560' }} />
-          <Line dataKey="Questionnaire" stroke="#d97757" strokeWidth={2} dot={false} />
-          <Line dataKey="Voice" stroke="#2f6fb5" strokeWidth={2} dot={false} />
-          <Line dataKey="Combined" stroke="#7a52b3" strokeWidth={2} dot={false} />
+          <ReferenceLine x={0} stroke="#5c6864" strokeDasharray="4 3" label={{ value: 'cancer vs benign lesion', position: 'insideTopLeft', fontSize: 10, fill: '#6b6560' }} />
+          <ReferenceLine x={+dDys.toFixed(2)} stroke="#5c6864" strokeDasharray="4 3" label={{ value: 'dysphonia vs normal', position: 'insideTopRight', fontSize: 10, fill: '#6b6560' }} />
+          <Line dataKey="Questionnaire" stroke="#c4843f" strokeWidth={2} dot={false} />
+          <Line dataKey="Voice" stroke="#3d79b8" strokeWidth={2} dot={false} />
+          <Line dataKey="Combined" stroke="#1f8a62" strokeWidth={2} dot={false} />
         </LineChart>
       </ResponsiveContainer>
       <div className="grid md:grid-cols-2 gap-4 text-sm mt-2">
-        <div className="rounded-lg bg-background border border-line p-3">
+        <div className="rounded-2xl bg-mist p-5">
           <p className="font-semibold mb-1">Abnormal vs normal larynx: d ≈ {dDys.toFixed(1)}</p>
           <p className="text-muted-foreground">CPPS separates dysphonic from normal voices with AUC 0.93 <Cite k="murton2020" />. Combined with the questionnaire, AUC reaches {combinedAuc(dQ, dDys, rho).toFixed(2)}. That is the job SEULA gives voice: who needs a laryngoscopy.</p>
         </div>
-        <div className="rounded-lg bg-background border border-line p-3">
+        <div className="rounded-2xl bg-mist p-5">
           <p className="font-semibold mb-1">Cancer vs benign lesion: d ≈ 0</p>
           <p className="text-muted-foreground">Mean HNR and F0 did not differ between laryngeal cancer and benign lesions, and HNR variability differed only in men <Cite k="jenkins2025" />. Voice cannot tell cancer from a polyp; the laryngoscopy does.</p>
         </div>
