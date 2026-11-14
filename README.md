@@ -14,6 +14,7 @@ The GP gets a sorted list, a ready-written history and a suggested next step.
 [Try it yourself](https://latt33.github.io/SEULA/#/check) · [Doctor's view](https://latt33.github.io/SEULA/#/clinician) · [For regions](https://latt33.github.io/SEULA/#/region) · [Evidence](https://latt33.github.io/SEULA/#/evidence)
 
 Junction 2026 · AstraZeneca challenge: *equitable and effective cancer care in Finland*<br>
+X-ray pre-read by **MedGemma** (open medical Gemma) on **Modal** serverless GPUs<br>
 Built from scratch on the same principle as [PUHELU](https://github.com/Latt33/PUHELU). *Seula* is Finnish for *sieve*.
 
 </div>
@@ -58,15 +59,45 @@ The region gets a dashboard of days from first symptom to doctor, per health sta
 
 - **Language understanding:** reads free text and dictation (Finnish and English), handles negation and third-person mentions, and surfaces red flags the patient forgot to tick (held-out precision 0.87, recall 0.77).
 - **Machine listening:** on-device speech signal analysis extracts clinical voice biomarkers (CPPS, HNR, jitter, shimmer), calibrated against Praat.
+- **Medical vision (MedGemma on Modal):** after the flag, Google's open MedGemma 1.5 4B pre-reads the chest X-ray on a serverless Modal GPU, compares it with the earlier one, boxes the finding and reorders the radiologist's worklist ([details](#medgemma-on-modal-from-flag-to-diagnosis)).
 - **Rules where accountability matters:** triage uses published guideline rules (NG12, PLCOm2012), so every flag is explainable. AI adds signal; it never raises urgency on its own.
 
-## MedGemma: from flag to diagnosis
+## MedGemma on Modal: from flag to diagnosis
 
-SEULA's flag books a chest X-ray. **MedGemma 1.5 4B** (Google's open medical Gemma, Health AI Developer Foundations) then pre-reads that X-ray, compares it with the patient's earlier X-ray, draws a box on suspicious areas and puts the patient at the top of the radiologist's list when a CT is needed. That shortens the next bottleneck on the pathway, from referral to diagnosis.
+SEULA's flag books a chest X-ray. Then the next queue starts: the X-ray waits in the radiologist's worklist in arrival order. **MedGemma 1.5 4B**, Google's open medical Gemma, pre-reads every X-ray SEULA ordered and moves the ones that need a CT to the top of the list. Open the [doctor's view](https://latt33.github.io/SEULA/#/clinician), pick Matti and watch it happen live: the scan runs over his X-ray, a box is drawn on the mass, and he rises from 4th to 1st on the radiologist's worklist.
 
-- **Open model, county-owned:** the same container runs on Modal (a Junction partner) for the demo or on the county's own GPU, so images never leave Finland.
-- **Checked against radiologists:** the demo X-rays come from NIH ChestX-ray14, which includes radiologist-drawn boxes. The doctor's view shows MedGemma's box next to the NIH box.
-- **Pre-read only:** a radiologist reports every image; MedGemma changes the order of the list, not the diagnosis.
+### How we use Gemma
+
+One small model, five steps, each one checked by the next:
+
+| Step | MedGemma input | Output |
+|---|---|---|
+| 1. Read | X-ray + SEULA's reasons for the referral (age, symptoms, guideline rule) | Draft findings and impression |
+| 2. Compare | Earlier X-ray + today's X-ray | What is new since last time ("new right upper lobe mass") |
+| 3. Name | Its own report, text only | The single finding to locate, or NONE |
+| 4. Locate | X-ray + that finding | A box on the image (`box_2d`, 0–1000) |
+| 5. Decide | Report + comparison, text only | Yes/no: chest CT within 2 weeks |
+
+- **Grounded in its own words.** The box is drawn for the finding named in MedGemma's own report, so the picture and the text cannot disagree. A box covering most of the image is thrown away, and normal X-rays get no box.
+- **Context from the pathway, not just pixels.** The read is primed with the reasons SEULA flagged the patient, the same way a radiologist reads the referral before the image.
+- **Longitudinal, not one-shot.** Multi-image input lets MedGemma compare with the earlier X-ray, which is how radiologists actually decide that something is new.
+- **Checked against radiologists.** The demo X-rays come from NIH ChestX-ray14, which includes radiologist-drawn boxes. The doctor's view shows MedGemma's box over the NIH box: on Matti's X-ray it contains 100% of the area the radiologist marked, and both demo cases get the right priority.
+- **Why a 4B open model.** It fits on one 24 GB GPU, so a county or hospital district can run it on its own hardware and X-rays never leave Finland. No per-call API fees and no data processor outside the EU.
+- **Pre-read only.** A radiologist reports every image. MedGemma changes the order of the list, never the diagnosis, and the doctor sees the reasoning in plain text.
+
+### How we use Modal
+
+The whole GPU service is one Python file, [`medgemma/app.py`](medgemma/app.py), deployed with `modal deploy`:
+
+- **Serverless GPU that scales to zero.** `@app.cls` loads MedGemma once per container (`@modal.enter`) and keeps it warm for 15 minutes; with no X-rays to read it costs nothing. A warm read takes about 4–8 seconds for all five steps.
+- **Never stuck waiting for a GPU.** A fallback list (`gpu=["L4", "A10G", "L40S", "A100-40GB"]`) takes the first free card.
+- **Fast cold starts.** Model weights live in a Modal Volume, so a new container loads from cache instead of downloading 8 GB from Hugging Face.
+- **Warm before the doctor clicks.** Opening the doctor's view calls `/warmup`, which `spawn`s a GPU container in the background while the doctor reads the history.
+- **A web API from the same file.** A FastAPI app (`@modal.asgi_app`) serves `/read` to the static GitHub Pages site, with CORS limited to our origin.
+- **Safe to leave public.** The Hugging Face token is a Modal Secret. Only the three demo X-rays are accepted (SHA-256 allowlist), at most one GPU runs (`max_containers=1`) and a Modal Dict holds a global quota of 40 reads per hour, so the URL cannot be used as a free MedGemma API.
+- **Same container, county hardware.** The pilot deployment drops the allowlist and runs the same image inside the hospital district's network.
+
+If the endpoint is off, the site shows MedGemma results recorded from the same service, so the demo always works.
 
 Run it:
 
@@ -75,7 +106,7 @@ pip install modal && modal setup
 # accept the terms on https://huggingface.co/google/medgemma-1.5-4b-it, then:
 modal secret create huggingface HF_TOKEN=hf_...
 modal deploy medgemma/app.py                  # prints https://<you>--seula-medgemma-web.modal.run
-python3 medgemma/record.py <that url>         # optional: saves results as an offline fallback
+python medgemma/record.py <that url>          # optional: saves results as an offline fallback
 ```
 
 Then set the repository variable `MEDGEMMA_URL` (Settings → Secrets and variables → Actions → Variables) and push, or open the site once with `?medgemma=<url>`.
