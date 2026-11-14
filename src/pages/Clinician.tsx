@@ -8,7 +8,7 @@ import { assess, Assessment, Finding, LEVEL_META, PLCO_THRESHOLD, SYMPTOM_LABEL,
 import { anamnesis, toFhir } from '../engine/report';
 import { VoiceFeatures } from '../engine/voice';
 import { useSession } from '../store/session';
-import { GemmaLetter, GemmaReader } from '../gemma/GemmaCard';
+import { XrayCard } from '../medgemma/XrayCard';
 
 type Row = DemoPatient & { r: Assessment; isMe?: boolean };
 const RANK = { urgent: 3, investigate: 2, review: 1, info: 0 };
@@ -149,9 +149,9 @@ function Packet({ p }: { p: Row }) {
         )}
       </div>
 
-      <GemmaReader answers={a} />
-
       {main && ms?.to && <Handoff p={p} main={main} />}
+
+      {p.cxr && <XrayCard p={p} context={`Age ${a.age ?? 'unknown'}. ${main ? main.title + '. ' : ''}${r.findings.filter((f) => f.level !== 'info').flatMap((f) => f.why).join('; ')}.`} />}
 
       <Notes p={p} />
 
@@ -259,8 +259,7 @@ function Handoff({ p, main }: { p: Row; main: Finding }) {
           <button onClick={() => setSent(true)} disabled={sent} className="btn-primary py-2 px-4 text-[15px] disabled:opacity-60">{sent ? 'Sent' : 'Send referral'}</button>
         </div>
       </div>
-      {view && <pre className="whitespace-pre-wrap text-[14px] bg-mist rounded-2xl p-5 font-mono leading-relaxed text-deep mb-1">{text}</pre>}
-      {view && <div className="mb-5"><GemmaLetter structured={text} /></div>}
+      {view && <pre className="whitespace-pre-wrap text-[14px] bg-mist rounded-2xl p-5 font-mono leading-relaxed text-deep mb-5">{text}</pre>}
       <ol className="grid grid-cols-[repeat(3,minmax(0,1fr))] gap-2">
         {stages.map(([l, d, done]) => (
           <li key={l} className="min-w-0 break-words">

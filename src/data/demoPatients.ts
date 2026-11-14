@@ -12,6 +12,8 @@ export interface DemoPatient {
   voice?: VoiceFeatures;
   symptomOnsetDaysAgo: number;
   completedDaysAgo: number;
+  /** Chest X-ray taken after the SEULA flag (NIH ChestX-ray14 images, used with attribution). */
+  cxr?: { current: string; prior?: string; priorWhen?: string; nihBox?: [number, number, number, number]; nihLabel?: string };
 }
 
 /** Voice data computed by the real engine on synthetic vowels (analysis/node/demo_voices.ts). MPT is illustrative: the source files are 3 s long. */
@@ -28,6 +30,7 @@ export const DEMO_PATIENTS: DemoPatient[] = [
     completedDaysAgo: 2,
     answers: { age: 67, sex: 'm', heightCm: 178, weightKg: 81, smoking: 'former', cigsPerDay: 20, yearsSmoked: 35, yearsSinceQuit: 6, education: 2, symptoms: { hoarseness: 'gt6w', cough: '3to6w' }, vhi10: [2, 2, 1, 1, 0, 3, 3, 2, 1, 3], eq5d: { mobility: 1, selfcare: 1, activities: 2, pain: 2, anxiety: 2 }, eqVas: 70, freeText: 'Ääni on ollut käheä jo pari kuukautta eikä parane. Joskus kurkkuun sattuu nielaistessa.' },
     voice: v('p1', 11.5),
+    cxr: { current: '00000276_000' },
   },
   {
     id: 'p2',
@@ -38,15 +41,7 @@ export const DEMO_PATIENTS: DemoPatient[] = [
     completedDaysAgo: 1,
     answers: { age: 64, sex: 'm', heightCm: 175, weightKg: 70, smoking: 'current', cigsPerDay: 20, yearsSmoked: 45, education: 2, copd: true, symptoms: { cough: 'gt6w', fatigue: '3to6w', weightLoss: '3to6w', sob: '3to6w' }, eq5d: { mobility: 2, selfcare: 1, activities: 2, pain: 1, anxiety: 2 }, eqVas: 60, freeText: 'Yskä ei ole mennyt ohi flunssan jälkeen ja paino on pudonnut noin 4 kiloa.' },
     voice: v('p2', 8.4),
-  },
-  {
-    id: 'p7',
-    name: 'Olena S.',
-    appointment: '09:20',
-    reason: 'Cough (form in Ukrainian)',
-    symptomOnsetDaysAgo: 44,
-    completedDaysAgo: 1,
-    answers: { age: 59, sex: 'f', heightCm: 164, weightKg: 58, smoking: 'former', cigsPerDay: 10, yearsSmoked: 25, yearsSinceQuit: 8, symptoms: { cough: '3to6w' }, eq5d: { mobility: 1, selfcare: 1, activities: 2, pain: 1, anxiety: 3 }, eqVas: 65, freeText: 'Кашель триває вже понад місяць, іноді з прожилками крові. За два місяці схудла приблизно на 5 кг. Болю в грудях немає.' },
+    cxr: { current: '00010815_006', prior: '00010815_003', priorWhen: 'Earlier X-ray', nihBox: [311.2, 241.5, 146.8, 256], nihLabel: 'Mass' },
   },
   {
     id: 'p3',

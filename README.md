@@ -60,15 +60,27 @@ The region gets a dashboard of days from first symptom to doctor, per health sta
 - **Machine listening:** on-device speech signal analysis extracts clinical voice biomarkers (CPPS, HNR, jitter, shimmer), calibrated against Praat.
 - **Rules where accountability matters:** triage uses published guideline rules (NG12, PLCOm2012), so every flag is explainable. AI adds signal; it never raises urgency on its own.
 
-## Gemma, on the clinic computer
+## MedGemma: from flag to diagnosis
 
-SEULA runs Google's open **Gemma 3 1B** model inside the doctor's browser (Transformers.js + WebGPU). The weights download once (about 1 GB) and are cached; patient text never leaves the computer, so there is no data-processing agreement, no cloud API and no per-call cost.
+SEULA's flag books a chest X-ray. **MedGemma 1.5 4B** (Google's open medical Gemma, Health AI Developer Foundations) then pre-reads that X-ray, compares it with the patient's earlier X-ray, draws a box on suspicious areas and puts the patient at the top of the radiologist's list when a CT is needed. That shortens the next bottleneck on the pathway, from referral to diagnosis.
 
-- **Reads the patient's own words in any language.** Finland's language barrier is a known inequity in cancer care. Gemma reads free text in Finnish, Swedish, Ukrainian, Russian, Arabic and more, extracts symptoms with quotes and durations, flags what was written but not ticked ("Not ticked: ask") and gives the doctor a one-line Finnish summary. Try the demo patient *Olena S.*, whose form is in Ukrainian: the rule-based reader finds nothing, Gemma finds blood in the cough and weight loss.
-- **Writes the referral letter.** From the structured referral facts, Gemma drafts the lähete as Finnish prose for the doctor to edit.
-- **Never decides urgency.** Gemma's output is shown as suggestions; triage stays with the published guideline rules.
+- **Open model, county-owned:** the same container runs on Modal (a Junction partner) for the demo or on the county's own GPU, so images never leave Finland.
+- **Checked against radiologists:** the demo X-rays come from NIH ChestX-ray14, which includes radiologist-drawn boxes. The doctor's view shows MedGemma's box next to the NIH box.
+- **Pre-read only:** a radiologist reports every image; MedGemma changes the order of the list, not the diagnosis.
 
-Why an open model: a wellbeing services county can run the same weights on its own servers or on every clinic PC, keep the data in Finland, audit the model and fine-tune it on Finnish clinical text. The next step is Gemma 4 E2B, which also takes audio, so a patient could describe symptoms out loud in their own language.
+Run it:
+
+```bash
+pip install modal && modal setup
+# accept the terms on https://huggingface.co/google/medgemma-1.5-4b-it, then:
+modal secret create huggingface HF_TOKEN=hf_...
+modal deploy medgemma/app.py                  # prints https://<you>--seula-medgemma-web.modal.run
+python3 medgemma/record.py <that url>         # optional: saves results as an offline fallback
+```
+
+Then set the repository variable `MEDGEMMA_URL` (Settings → Secrets and variables → Actions → Variables) and push, or open the site once with `?medgemma=<url>`.
+
+X-ray images: NIH ChestX-ray14, NIH Clinical Center (https://nihcc.app.box.com/v/ChestXray-NIHCC); Wang et al., *ChestX-ray8*, CVPR 2017.
 
 ## National cancer strategy, Goal 3
 

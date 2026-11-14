@@ -19,6 +19,8 @@ jobs:
         with: { node-version: 20, cache: npm }
       - run: npm ci
       - run: npm run build
+        env:
+          VITE_MEDGEMMA_URL: ${{ vars.MEDGEMMA_URL }}
       - uses: actions/upload-pages-artifact@v3
         with: { path: dist }
       - id: deployment
