@@ -3,20 +3,42 @@
   "model": "google/medgemma-1.5-4b-it",
   "report": "FINDINGS:\nThere is a large opacity in the right upper lobe, likely representing a mass. There is also a smaller nodule in the left lower lobe. The heart size is normal. The mediastinum is unremarkable. The lungs are otherwise clear.\n\nIMPRESSION:\nRight upper lobe mass and left lower lobe nodule. Further evaluation with CT scan is recommended.",
   "comparison": "The current chest X-ray shows a significant mass in the right upper lobe, which is not present in the prior image. The mass appears to be causing a shift of the mediastinum to the left. The left lung appears relatively clear.",
-  "boxes": [],
-  "boxes_raw": "[]",
+  "target": "Right upper lobe mass",
+  "boxes": [
+   {
+    "label": "Right upper lobe mass",
+    "box_2d": [
+     150.0,
+     200.0,
+     700.0,
+     750.0
+    ]
+   }
+  ],
+  "boxes_raw": "The right upper lobe mass is located at approximately [150, 200, 700, 750].",
   "ct_within_2_weeks": true,
-  "seconds": 5.9,
+  "seconds": 8.3,
   "recorded": "2026-11-14"
  },
  "00000276_000": {
   "model": "google/medgemma-1.5-4b-it",
   "report": "FINDINGS:\nThe heart size is mildly enlarged. The lungs are clear without focal consolidation, pleural effusion, or pneumothorax. There is no evidence of a mass, nodule, or hilar enlargement.\n\nIMPRESSION:\nNo acute cardiopulmonary process. No evidence of a mass, nodule, or hilar enlargement.",
   "comparison": null,
-  "boxes": [],
-  "boxes_raw": "[]",
+  "target": "FINDINGS:",
+  "boxes": [
+   {
+    "label": "FINDINGS:",
+    "box_2d": [
+     0.0,
+     0.0,
+     1000.0,
+     1000.0
+    ]
+   }
+  ],
+  "boxes_raw": "FINDINGS: The heart appears enlarged. The lungs are clear. There is no pleural effusion or pneumothorax. The mediastinum is unremarkable.\n\nBounding box: [y0, x0, y1, x1] = [0, 0, 1000, 1000]",
   "ct_within_2_weeks": false,
-  "seconds": 3.2,
+  "seconds": 6.8,
   "recorded": "2026-11-14"
  }
 }

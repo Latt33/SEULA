@@ -24,7 +24,7 @@ export function medgemmaUrl(): string {
   return ((import.meta as any).env?.VITE_MEDGEMMA_URL ?? '').replace(/\/$/, '');
 }
 
-export const recorded = (id: string): MedGemmaResult | undefined => (cache as Record<string, MedGemmaResult>)[id];
+export const recorded = (id: string): MedGemmaResult | undefined => (cache as unknown as Record<string, MedGemmaResult>)[id];
 
 async function toB64(src: string) {
   const blob = await (await fetch(src)).blob();

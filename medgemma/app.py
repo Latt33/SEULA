@@ -121,9 +121,12 @@ class MedGemma:
         lines = self._generate([], TARGET_PROMPT.format(report=report), 24).strip().splitlines()
         target = (lines[0].strip().strip(".*") if lines else "") or "NONE"
         loc_raw, boxes = "", []
+        if target.upper().startswith(("FINDINGS", "IMPRESSION", "NO ")):
+            target = "NONE"
         if "none" not in target.lower():
             loc_raw = self._generate([cur], LOCATE_PROMPT.format(target=target), 400)
-            boxes = _boxes(loc_raw, target)
+            boxes = [b for b in _boxes(loc_raw, target)
+                     if (b["box_2d"][2] - b["box_2d"][0]) * (b["box_2d"][3] - b["box_2d"][1]) < 600_000]
         triage = self._generate([], TRIAGE_PROMPT.format(report=report + ("\n" + comparison if comparison else "")), 5)
         return {
             "model": MODEL_ID,
