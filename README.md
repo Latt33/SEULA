@@ -43,6 +43,7 @@ The slowest route, public primary care, serves the people with the least. The wa
 1. **At home.** The patient opens the link from their booking SMS and answers short, validated symptom questions in Finnish, Swedish or English.
 2. **Three seconds of "aaah".** The phone measures how steady the voice is. The audio is analysed on the phone and never uploaded.
 3. **At the visit.** The GP sees a list sorted by urgency, the reasons behind each flag with the guideline that triggered it, a suggested next step (chest X-ray, FIT, laryngoscopy) and a history to paste straight into the record.
+4. **Moving the patient on.** When there is a cancer risk, SEULA drafts the referral from the answers, scores and guideline rule. The doctor reviews and sends it, and SEULA follows the patient until the specialist visit, alerting the health station if nothing is booked within two weeks.
 
 The region gets a dashboard of days from first symptom to doctor, per health station, so a growing delay shows up within weeks instead of in next year's statistics.
 

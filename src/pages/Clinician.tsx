@@ -56,50 +56,91 @@ function sig(v?: VoiceFeatures) {
   return v ? { cpps: v.cpps, jitter: v.jitterLocal, shimmer: v.shimmerLocal, hnrSd: v.hnrSd, mpt: v.mpt, qualityOk: v.quality.ok } : undefined;
 }
 
+const STEP: Record<string, { title: string; sub: string; to?: string; within?: string }> = {
+  larynx: { title: 'Refer for laryngoscopy', sub: 'Suspected laryngeal cancer pathway', to: 'ENT (otorhinolaryngology)', within: '2 weeks' },
+  'lung-haemoptysis': { title: 'Refer on the lung cancer pathway', sub: 'Suspected cancer pathway', to: 'Pulmonology', within: '2 weeks' },
+  'lung-cxr': { title: 'Chest X-ray within 2 weeks', sub: 'Urgent direct access', to: 'Radiology: chest X-ray', within: '2 weeks' },
+  'lung-infections': { title: 'Consider a chest X-ray', sub: 'Recurrent chest infection' },
+  'crc-fit': { title: 'Send a FIT kit home today', sub: 'Refer if ≥ 10 µg Hb/g', to: 'Laboratory: quantitative FIT', within: '2 weeks' },
+  dysphagia: { title: 'Refer for endoscopy', sub: 'Suspected upper-GI cancer pathway', to: 'Gastroenterology: endoscopy', within: '2 weeks' },
+  'lung-plco': { title: 'Low threshold for imaging', sub: 'High-risk smoker; offer smoking cessation' },
+  'larynx-acoustic': { title: 'Ask about voice change', sub: 'Re-record the voice in 3 weeks' },
+  vhi: { title: 'Examine the larynx if persistent', sub: 'Voice handicap above normal' },
+  g8: { title: 'Geriatric assessment', sub: 'Attach G8 to any referral' },
+  text: { title: 'Ask about symptoms they mentioned', sub: 'Written in their own words, not ticked' },
+  mpt: { title: 'Spirometry if not recent', sub: 'Short phonation time' },
+};
+const BASIS: Record<string, string> = { ng12: 'NICE NG12', plco: 'PLCOm2012', murton2020: 'CPPS cut-off (Murton 2020)', arffa2012: 'VHI-10 norms', bellera2012: 'G8 (Bellera 2012)', seula: 'SEULA safety rule' };
+const step = (f: Finding) => STEP[f.id] ?? { title: f.action, sub: '' };
+
+/** Turn "Hoarseness (Over 6 weeks)", "VHI-10 = 18 (abnormal > 11)", "Acoustic dysphonia: CPPS 11.1 dB" into label / value pairs. */
+function kv(w: string): [string, string] {
+  let m = w.match(/^Acoustic dysphonia: CPPS (.+?) \(< ?([\d.]+)\)$/);
+  if (m) return ['Voice clarity', `${m[1]}, below ${m[2]} dB`];
+  m = w.match(/^(.+?) = (.+)$/); if (m) return [m[1], m[2]];
+  m = w.match(/^(.+?): (.+)$/); if (m) return [m[1], m[2]];
+  m = w.match(/^(.+?) \((.+)\)$/); if (m) return [m[1], m[2]];
+  m = w.match(/^(Hoarseness|Cough|Fatigue) (.+)$/i); if (m) return [m[1], m[2]];
+  if (/^Ever smoked$/i.test(w)) return ['Smoking', 'Ever smoked'];
+  if (/^Age /.test(w)) return ['Age', w.slice(4)];
+  return [w, ''];
+}
+
 function Packet({ p }: { p: Row }) {
   const { r, answers: a, voice } = p;
   const meta = LEVEL_META[r.level];
   const actions = r.findings.filter((f) => f.level !== 'info');
   const [main, ...others] = actions;
   const unticked = r.textMentions.filter((m) => !m.negated && !m.alsoTicked);
+  const [more, setMore] = useState(false);
+  const ms = main ? step(main) : undefined;
 
   return (
     <section className="space-y-6 min-w-0">
-      {/* 1 + 2: what to do, and why */}
       <div className="card overflow-hidden">
-        <div className="px-8 pt-7 pb-6">
-          <div className="flex flex-wrap items-baseline justify-between gap-3">
-            <h2 className="text-3xl text-deep">{p.name}{a.age ? `, ${a.age}` : ''}</h2>
-            <span className="text-[15px] text-muted-foreground">{p.appointment} · “{p.reason}”</span>
-          </div>
+        <div className="px-6 md:px-8 pt-6 pb-5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <h2 className="text-2xl md:text-3xl text-deep">{p.name}{a.age ? `, ${a.age}` : ''}</h2>
+          <span className="text-[15px] text-muted-foreground">{p.appointment} · “{p.reason}”</span>
         </div>
 
-        <div className="px-8 py-7" style={{ background: meta.bg }}>
-          <div className="flex items-center gap-3 mb-3">
+        {/* Next step */}
+        <div className="px-6 md:px-8 py-6" style={{ background: meta.bg }}>
+          <div className="flex flex-wrap items-center gap-2 mb-3">
             <LevelBadge level={r.level} long />
+            {main && <span className="text-sm text-muted-foreground">Based on {BASIS[main.source] ?? main.source}</span>}
           </div>
-          {main ? (
+          {main && ms ? (
             <>
-              <p className="text-2xl md:text-[2rem] leading-tight text-deep font-medium mb-2">{main.action}</p>
+              <p className="text-2xl md:text-3xl leading-tight text-deep font-medium">{ms.title}</p>
+              {ms.sub && <p className="text-lg text-deep/70 mt-1">{ms.sub}</p>}
               {others.length > 0 && (
-                <ul className="text-lg text-deep/80 space-y-1">
-                  {others.map((f) => <li key={f.id}>Also: {f.action.charAt(0).toLowerCase() + f.action.slice(1)}</li>)}
-                </ul>
+                <div className="mt-5 pt-4 border-t border-deep/10">
+                  <p className="text-sm text-muted-foreground mb-2">Also</p>
+                  <ul className="space-y-1.5">
+                    {others.map((f) => (
+                      <li key={f.id} className="flex gap-2.5 items-baseline text-deep">
+                        <span className="w-1.5 h-1.5 rounded-full shrink-0 translate-y-[-2px]" style={{ background: LEVEL_META[f.level].color }} />
+                        <span>{step(f).title}{step(f).sub && <span className="text-muted-foreground"> · {step(f).sub}</span>}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </>
           ) : (
-            <p className="text-3xl text-deep font-medium">No warning signs. Use the visit as planned.</p>
+            <p className="text-2xl md:text-3xl text-deep font-medium">No warning signs. Use the visit as planned.</p>
           )}
         </div>
 
+        {/* Why */}
         {actions.length > 0 && (
-          <div className="px-8 py-7">
-            <h3 className="text-lg text-deep mb-4">Why</h3>
-            <ul className="space-y-4">
+          <div className="px-6 md:px-8 py-6">
+            <h3 className="text-sm text-muted-foreground mb-4">Why</h3>
+            <div className="space-y-6">
               {actions.map((f) => <Reason key={f.id} f={f} />)}
-            </ul>
+            </div>
             {unticked.length > 0 && (
-              <p className="mt-5 rounded-2xl bg-[#eaf1f7] text-[#3e6a93] px-5 py-3">
+              <p className="mt-6 rounded-2xl bg-[#eaf1f7] text-[#3e6a93] px-5 py-3">
                 <b className="font-medium">Ask about:</b> {unticked.map((m) => SYMPTOM_LABEL[m.symptom].toLowerCase()).join(', ')}. Mentioned in their own words but not ticked.
               </p>
             )}
@@ -107,43 +148,126 @@ function Packet({ p }: { p: Row }) {
         )}
       </div>
 
-      {/* 3: supporting evidence */}
-      <div className={`grid grid-cols-1 gap-6 ${voice ? 'xl:grid-cols-[1.15fr_1fr]' : ''}`}>
-        {voice && <VoiceCard voice={voice} />}
-        <div className="card p-6 space-y-6">
-          <h3 className="text-lg text-deep">Scores</h3>
-          <Gauge label="Lung cancer risk, 6 years" value={r.scores.plco !== undefined ? r.scores.plco * 100 : undefined} unit="%" threshold={PLCO_THRESHOLD * 100} max={10} dir="above" cite="plco" na="Not a smoker" />
-          <Gauge label="Voice handicap (VHI-10)" value={r.scores.vhi10} unit="/40" threshold={VHI10_THRESHOLD} max={40} dir="above" cite="arffa2012" na="No voice change" />
-          <Gauge label="Frailty (G8)" value={r.scores.g8} unit="/17" threshold={G8_THRESHOLD} max={17} dir="below" cite="bellera2012" na="Under 70" />
-          {!p.isMe && <p className="text-[15px] text-muted-foreground">First symptom {p.symptomOnsetDaysAgo} days ago.</p>}
-        </div>
-      </div>
+      {main && ms?.to && <Handoff p={p} main={main} />}
 
-      {a.freeText && (
-        <div className="card p-6 flex gap-4">
-          <MessageSquareQuote className="text-primary shrink-0 mt-1" size={20} />
-          <p className="text-lg text-deep italic">“{a.freeText}”</p>
+      <Notes p={p} />
+
+      <button onClick={() => setMore(!more)} className="w-full card px-6 py-4 flex items-center justify-between text-deep hover:bg-mist/40 transition-colors">
+        <span>Voice, scores and the patient’s own words</span>
+        <ChevronDown size={18} className={`transition-transform ${more ? 'rotate-180' : ''}`} />
+      </button>
+      {more && (
+        <div className="space-y-6">
+          <div className={`grid grid-cols-1 gap-6 ${voice ? 'xl:grid-cols-[1.15fr_1fr]' : ''}`}>
+            {voice && <VoiceCard voice={voice} />}
+            <div className="card p-6 space-y-6">
+              <h3 className="text-lg text-deep">Scores</h3>
+              <Gauge label="Lung cancer risk, 6 years" value={r.scores.plco !== undefined ? r.scores.plco * 100 : undefined} unit="%" threshold={PLCO_THRESHOLD * 100} max={10} dir="above" cite="plco" na="Not a smoker" />
+              <Gauge label="Voice handicap (VHI-10)" value={r.scores.vhi10} unit="/40" threshold={VHI10_THRESHOLD} max={40} dir="above" cite="arffa2012" na="No voice change" />
+              <Gauge label="Frailty (G8)" value={r.scores.g8} unit="/17" threshold={G8_THRESHOLD} max={17} dir="below" cite="bellera2012" na="Under 70" />
+              {!p.isMe && <p className="text-[15px] text-muted-foreground">First symptom {p.symptomOnsetDaysAgo} days ago.</p>}
+            </div>
+          </div>
+          {a.freeText && (
+            <div className="card p-6 flex gap-4">
+              <MessageSquareQuote className="text-primary shrink-0 mt-1" size={20} />
+              <p className="text-lg text-deep italic">“{a.freeText}”</p>
+            </div>
+          )}
         </div>
       )}
-
-      {/* 4: on request */}
-      <Notes p={p} />
     </section>
   );
 }
 
 function Reason({ f }: { f: Finding }) {
   const [open, setOpen] = useState(false);
+  const rows = f.why.map(kv);
   return (
-    <li className="flex gap-4">
-      <span className="mt-2 w-2 h-2 rounded-full shrink-0" style={{ background: LEVEL_META[f.level].color }} />
-      <div>
-        <p className="text-lg text-deep">{f.title}</p>
-        <p className="text-muted-foreground">{f.why.join(' · ')}</p>
-        <button onClick={() => setOpen(!open)} className="text-[15px] text-primary">{open ? 'Hide guideline' : 'Show guideline'}</button>
-        {open && <p className="text-[15px] text-muted-foreground mt-1">{f.rule} <Cite k={f.source}>source</Cite></p>}
+    <div>
+      <div className="flex items-start gap-3 mb-2">
+        <span className="mt-2.5 w-2 h-2 rounded-full shrink-0" style={{ background: LEVEL_META[f.level].color }} />
+        <p className="text-lg text-deep leading-snug">{f.title}</p>
       </div>
-    </li>
+      <dl className="ml-5 grid grid-cols-[minmax(96px,max-content)_minmax(0,1fr)] gap-x-5 gap-y-1 text-[15px]">
+        {rows.map(([k, v]) => (
+          v ? (
+            <div key={k + v} className="contents">
+              <dt className="text-muted-foreground">{k}</dt>
+              <dd className="text-deep min-w-0">{v}</dd>
+            </div>
+          ) : (
+            <dd key={k} className="col-span-2 text-deep min-w-0">{k}</dd>
+          )
+        ))}
+      </dl>
+      <button onClick={() => setOpen(!open)} className="ml-5 mt-2 text-sm text-primary">{open ? 'Hide rule' : `Rule: ${BASIS[f.source] ?? f.source}`}</button>
+      {open && <p className="ml-5 text-[15px] text-muted-foreground mt-1 max-w-2xl">{f.rule} <Cite k={f.source}>source</Cite></p>}
+    </div>
+  );
+}
+
+function referralText(p: Row, main: Finding) {
+  const { r, answers: a, voice } = p;
+  const s = STEP[main.id];
+  const lines = [
+    `REFERRAL: ${s?.to}`,
+    `Urgency: ${LEVEL_META[main.level].label}, within ${s?.within ?? '2 weeks'}`,
+    `Patient: ${p.name}${a.age ? `, ${a.age} y` : ''}`,
+    '',
+    `Question: ${s?.sub}. ${main.title}.`,
+    `Basis: ${BASIS[main.source] ?? main.source}. ${main.rule}`,
+    '',
+    'Findings:',
+    ...main.why.map((w) => `- ${w}`),
+    ...r.findings.filter((f) => f.id !== main.id && f.level !== 'info' && f.id !== 'lung-plco').map((f) => `- Also: ${f.title}`),
+    '',
+    'Scores:',
+    ...(r.scores.plco !== undefined ? [`- PLCOm2012 6-year lung cancer risk ${(r.scores.plco * 100).toFixed(1)}%`] : []),
+    ...(r.scores.vhi10 !== undefined ? [`- VHI-10 ${r.scores.vhi10}/40`] : []),
+    ...(voice?.cpps !== undefined ? [`- Voice clarity (CPPS) ${voice.cpps.toFixed(1)} dB`] : []),
+    ...(r.scores.g8 !== undefined ? [`- G8 ${r.scores.g8}/17`] : []),
+    ...(a.freeText ? ['', `Patient's own words: "${a.freeText}"`] : []),
+    '',
+    'Attached: structured history, EQ-5D-5L profile' + (r.scores.g8 !== undefined ? ', G8' : '') + ', FHIR QuestionnaireResponse.',
+  ];
+  return lines.join('\n');
+}
+
+function Handoff({ p, main }: { p: Row; main: Finding }) {
+  const s = STEP[main.id]!;
+  const [view, setView] = useState(false);
+  const [sent, setSent] = useState(false);
+  const text = referralText(p, main);
+  const stages = [
+    ['Flagged', 'Today', true],
+    ['Referral sent', sent ? 'Today' : 'Waiting', sent],
+    [s.to!.split(':')[0].split(' (')[0], `Target within ${s.within}`, false],
+  ] as const;
+  return (
+    <div className="card p-6 md:p-7">
+      <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
+        <div>
+          <p className="text-lg text-deep">Referral draft is ready</p>
+          <p className="text-[15px] text-muted-foreground">To {s.to}. Filled from the answers, scores and guideline rule. Review before sending.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => setView(!view)} className="btn-ghost py-2 px-4 text-[15px]">{view ? 'Hide draft' : 'Review draft'}</button>
+          <button onClick={() => setSent(true)} disabled={sent} className="btn-primary py-2 px-4 text-[15px] disabled:opacity-60">{sent ? 'Sent' : 'Send referral'}</button>
+        </div>
+      </div>
+      {view && <pre className="whitespace-pre-wrap text-[14px] bg-mist rounded-2xl p-5 font-mono leading-relaxed text-deep mb-5">{text}</pre>}
+      <ol className="grid grid-cols-[repeat(3,minmax(0,1fr))] gap-2">
+        {stages.map(([l, d, done]) => (
+          <li key={l} className="min-w-0 break-words">
+            <div className={`h-1.5 rounded-full mb-2 ${done ? 'bg-primary' : 'bg-mist'}`} />
+            <p className={`text-[15px] ${done ? 'text-deep' : 'text-muted-foreground'}`}>{l}</p>
+            <p className="text-sm text-muted-foreground">{d}</p>
+          </li>
+        ))}
+      </ol>
+      <p className="text-sm text-muted-foreground mt-4">SEULA follows the patient until the specialist visit and alerts the health station if nothing is booked within {s.within}.</p>
+    </div>
   );
 }
 
