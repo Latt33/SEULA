@@ -78,7 +78,7 @@ class MedGemma:
         from transformers import AutoModelForImageTextToText, AutoProcessor
         self.processor = AutoProcessor.from_pretrained(MODEL_ID)
         self.model = AutoModelForImageTextToText.from_pretrained(
-            MODEL_ID, torch_dtype=torch.bfloat16, device_map="cuda")
+            MODEL_ID, dtype=torch.bfloat16, device_map="cuda")
         cache.commit()
 
     def _generate(self, images, text, max_new_tokens=400):
