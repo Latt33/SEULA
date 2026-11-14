@@ -32,7 +32,7 @@ export function Clinician() {
       <div className="mb-10 max-w-3xl">
         <p className="eyebrow mb-3">For doctors</p>
         <h1 className="text-5xl md:text-6xl text-deep mb-5">Your morning list, already sorted</h1>
-        <p className="text-lg text-muted-foreground">{rows.length} patients answered before their visit. {needTest} need a test within two weeks. Pick a patient to see why.</p>
+        <p className="text-xl text-muted-foreground">{needTest} of {rows.length} patients need a test within two weeks.</p>
       </div>
 
       <div className="grid lg:grid-cols-[300px_1fr] gap-6">
@@ -113,9 +113,12 @@ function Why({ p }: { p: Row }) {
         <div key={f.id} className="flex gap-4">
           <div className="pt-0.5"><LevelBadge level={f.level} /></div>
           <div>
-            <p className="font-medium text-deep">{f.title}</p>
+            <p className="text-lg font-medium text-deep">{f.title}</p>
             <p className="text-muted-foreground">{f.why.join(' · ')}</p>
-            <p className="text-sm text-muted-foreground mt-1">Rule: {f.rule} <Cite k={f.source}>source</Cite></p>
+            <details className="mt-1 text-[15px] text-muted-foreground">
+              <summary className="cursor-pointer text-primary">Show guideline</summary>
+              <p className="mt-1">{f.rule} <Cite k={f.source}>source</Cite></p>
+            </details>
           </div>
         </div>
       ))}
@@ -129,7 +132,7 @@ function Why({ p }: { p: Row }) {
         </div>
       )}
       {!p.isMe && (
-        <p className="text-sm text-muted-foreground">First symptom {p.symptomOnsetDaysAgo} days ago · form filled {p.completedDaysAgo} days ago · visit today. These dates are what regions use to measure delays.</p>
+        <p className="text-muted-foreground">First symptom {p.symptomOnsetDaysAgo} days ago.</p>
       )}
     </div>
   );
@@ -203,7 +206,7 @@ function Gauge({ label, value, unit, threshold, max, dir, cite, na }: { label: s
         <div className="absolute inset-y-0 rounded-full" style={{ left: dir === 'above' ? `${tpos}%` : 0, width: dir === 'above' ? `${100 - tpos}%` : `${tpos}%`, background: '#efd9d5' }} />
         <div className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-white shadow" style={{ left: `calc(${pos}% - 7px)`, background: abn ? '#a8483f' : 'rgb(var(--primary-rgb))' }} />
       </div>
-      <div className="text-xs text-muted-foreground mt-1">{abn ? 'Outside' : 'Within'} the usual range (cut-off {threshold}{unit}) · <Cite k={cite}>reference</Cite></div>
+      <div className="text-sm text-muted-foreground mt-1">{abn ? 'Outside' : 'Within'} the usual range (cut-off {threshold}{unit}) · <Cite k={cite}>reference</Cite></div>
     </div>
   );
 }

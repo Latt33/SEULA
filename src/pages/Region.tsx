@@ -41,7 +41,7 @@ export function Region() {
               );
             })}
           </div>
-          <p className="text-xs text-muted-foreground mt-5">Vertical line: Finland average {NATIONAL.insufficient}%. These are survey estimates; differences of a few points between mid-table regions are not meaningful.</p>
+          <p className="text-sm text-muted-foreground mt-5">Vertical line: Finland average {NATIONAL.insufficient}%. These are survey estimates; differences of a few points between mid-table regions are not meaningful.</p>
         </div>
 
         <div className="card-cream p-7 h-fit">
@@ -84,7 +84,7 @@ export function Region() {
             [`€${Math.round(pilot.net / 1000)}k`, 'net saving each year, after all costs'],
           ].map(([v, l]) => (
             <div key={l} className="card-cream p-6 text-foreground">
-              <p className="font-serif font-light text-5xl text-deep tnum mb-2">{v}</p>
+              <p className="font-medium text-5xl text-deep tnum mb-2">{v}</p>
               <p className="text-muted-foreground">{l}</p>
             </div>
           ))}
@@ -143,7 +143,7 @@ function EarlyWarning() {
             </g>
           ))}
         </svg>
-        <p className="text-xs text-muted-foreground h-4">{hw ? `Week ${hw}: ${series.map((s) => `${s.name} ${s.v[hw - 1]} days`).join(' · ')}` : 'Hover to compare stations'}</p>
+        <p className="text-sm text-muted-foreground h-4">{hw ? `Week ${hw}: ${series.map((s) => `${s.name} ${s.v[hw - 1]} days`).join(' · ')}` : 'Hover to compare stations'}</p>
       </div>
       <div className="card-cream p-7">
         <p className="text-lg text-deep mb-2">Station C needs attention</p>

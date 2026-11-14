@@ -52,14 +52,14 @@ export function SpectrogramCanvas({ spec, height = 180 }: { spec: Spec; height?:
   const secs = Array.from({ length: Math.floor(spec.durationS) + 1 }, (_, i) => i);
   return (
     <div className="flex gap-2">
-      <div className="relative w-8 text-[10px] text-cream/50 tnum" style={{ height }}>
+      <div className="relative w-8 text-xs text-cream/50 tnum" style={{ height }}>
         {kHz.map((k) => (
           <span key={k} className="absolute right-0 -translate-y-1/2" style={{ top: `${(1 - (k * 1000) / spec.maxHz) * 100}%` }}>{k}k</span>
         ))}
       </div>
       <div className="flex-1 min-w-0">
         <canvas ref={ref} className="w-full rounded-xl" style={{ height, imageRendering: 'auto' }} aria-label="Voice spectrogram" />
-        <div className="relative h-4 text-[10px] text-cream/50 tnum mt-1">
+        <div className="relative h-4 text-xs text-cream/50 tnum mt-1">
           {secs.map((s) => (
             <span key={s} className="absolute -translate-x-1/2" style={{ left: `${(s / spec.durationS) * 100}%` }}>{s}s</span>
           ))}
@@ -69,7 +69,7 @@ export function SpectrogramCanvas({ spec, height = 180 }: { spec: Spec; height?:
   );
 }
 
-export function Ring({ value, label, unit, frac, ok }: { value: string; label: string; unit: string; frac: number; ok: boolean }) {
+export function Ring({ value, label, frac, ok }: { value: string; label: string; unit?: string; frac: number; ok: boolean }) {
   const r = 30;
   const C = 2 * Math.PI * r;
   return (
@@ -79,8 +79,8 @@ export function Ring({ value, label, unit, frac, ok }: { value: string; label: s
         <circle cx="38" cy="38" r={r} fill="none" stroke={ok ? '#8fc4ad' : '#e3a49c'} strokeWidth="4" strokeLinecap="round" strokeDasharray={`${Math.max(0.02, Math.min(1, frac)) * C} ${C}`} transform="rotate(-90 38 38)" />
         <text x="38" y="42" textAnchor="middle" fontSize="17" fill="#fffcf7" style={{ fontFamily: "'DM Sans', sans-serif" }}>{value}</text>
       </svg>
-      <span className="text-[13px] text-cream mt-1">{label}</span>
-      <span className="text-[11px] text-cream/50">{unit} · {ok ? 'typical' : 'outside range'}</span>
+      <span className="text-base text-cream mt-1">{label}</span>
+      <span className={`text-sm ${ok ? 'text-cream/55' : 'text-[#e3a49c]'}`}>{ok ? 'Typical' : 'Check'}</span>
     </div>
   );
 }
@@ -92,8 +92,8 @@ export function VoicePanel({ voice, reference, referenceLabel }: { voice: VoiceF
   return (
     <div className="panel-dark p-7">
       <div className="flex items-center justify-between mb-6">
-        <p className="text-xs uppercase tracking-[0.14em] text-cream/70 flex items-center gap-2"><Mic size={14} /> Voice · measured on the patient’s phone</p>
-        <span className="text-xs text-cream/50">“aaah”, {voice.quality.durationS.toFixed(1)} s</span>
+        <p className="text-base text-cream/75 flex items-center gap-2"><Mic size={16} /> Voice check</p>
+        <span className="text-sm text-cream/50">“aaah”, {voice.quality.durationS.toFixed(1)} s</span>
       </div>
       <div className="grid grid-cols-4 gap-2 mb-7">
         <Ring value={voice.cpps.toFixed(1)} unit="dB" label="Clarity" frac={voice.cpps / 22} ok={cppsOk} />
@@ -103,14 +103,12 @@ export function VoicePanel({ voice, reference, referenceLabel }: { voice: VoiceF
       </div>
       {voice.spectrogram ? (
         <>
-          <p className="font-serif font-light text-2xl mb-3">{cppsOk ? 'Clear, steady voice' : 'Signs of a strained or breathy voice'}</p>
+          <p className="font-medium text-2xl mb-3">{cppsOk ? 'Clear, steady voice' : 'Signs of a strained or breathy voice'}</p>
           <SpectrogramCanvas spec={voice.spectrogram} />
-          <p className="text-sm text-cream/70 mt-3 leading-relaxed">
-            Each bright horizontal line is one harmonic of the voice. A healthy voice shows sharp, evenly spaced lines; a strained or breathy voice blurs them into haze.
-          </p>
+          <p className="text-base text-cream/70 mt-3">Sharp lines mean a steady voice. Haze means strain.</p>
           {reference?.spectrogram && (
             <div className="mt-6 pt-5 border-t border-cream/10">
-              <p className="text-xs uppercase tracking-[0.14em] text-cream/50 mb-3">For comparison · {referenceLabel}</p>
+              <p className="text-sm text-cream/55 mb-3">For comparison: {referenceLabel}</p>
               <SpectrogramCanvas spec={reference.spectrogram} height={90} />
             </div>
           )}
@@ -118,7 +116,7 @@ export function VoicePanel({ voice, reference, referenceLabel }: { voice: VoiceF
       ) : (
         <p className="text-cream/60">No spectrogram for this recording.</p>
       )}
-      <p className="text-xs text-cream/45 mt-5">Voice can prompt a question but never raises urgency on its own. Clarity cut-off 14.45 dB <Cite k="murton2020"><span className="text-cream/60">Murton 2020</span></Cite> · <Link to="/evidence" className="underline">how we checked the measures</Link></p>
+      <p className="text-sm text-cream/50 mt-5">Voice never raises urgency on its own. <Cite k="murton2020"><span className="text-cream/60">Reference</span></Cite> · <Link to="/evidence" className="underline">How we checked it</Link></p>
     </div>
   );
 }

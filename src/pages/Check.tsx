@@ -199,7 +199,7 @@ export function Check() {
                       {on && (
                         <div className="grid grid-cols-3 gap-1.5 mt-2 ml-8">
                           {(['lt3w', '3to6w', 'gt6w'] as Duration[]).map((d) => (
-                            <button key={d} onClick={() => set({ symptoms: { ...a.symptoms, [k]: d } })} className={`text-xs py-1.5 rounded-lg border ${a.symptoms[k] === d ? 'border-primary bg-sage text-deep font-medium' : 'border-line bg-white'}`}>
+                            <button key={d} onClick={() => set({ symptoms: { ...a.symptoms, [k]: d } })} className={`text-sm py-1.5 rounded-lg border ${a.symptoms[k] === d ? 'border-primary bg-sage text-deep font-medium' : 'border-line bg-white'}`}>
                               {t.dur[d]}
                             </button>
                           ))}
@@ -230,7 +230,7 @@ export function Check() {
                 </div>
               </div>
             ))}
-            <p className="text-xs text-muted-foreground">0 = {t.vhiScale[0]} · 4 = {t.vhiScale[4]}</p>
+            <p className="text-sm text-muted-foreground">0 = {t.vhiScale[0]} · 4 = {t.vhiScale[4]}</p>
           </div>
         )}
 
@@ -256,7 +256,7 @@ export function Check() {
                 <p className="text-sm font-medium mb-2">{d[lang]}</p>
                 <div className="grid grid-cols-5 gap-1">
                   {EQ_LEVELS[lang].map((lab, i) => (
-                    <button key={i} onClick={() => set({ eq5d: { ...a.eq5d, [d.key]: (i + 1) as 1 } })} className={`py-2 px-1 rounded-lg border text-[11px] leading-tight ${a.eq5d?.[d.key] === i + 1 ? 'border-primary bg-sage text-deep font-medium' : 'border-line bg-white'}`}>{lab}</button>
+                    <button key={i} onClick={() => set({ eq5d: { ...a.eq5d, [d.key]: (i + 1) as 1 } })} className={`py-2 px-1 rounded-lg border text-sm leading-tight ${a.eq5d?.[d.key] === i + 1 ? 'border-primary bg-sage text-deep font-medium' : 'border-line bg-white'}`}>{lab}</button>
                   ))}
                 </div>
               </div>
@@ -295,7 +295,7 @@ export function Check() {
             {hasDictation && (
               <div className="mt-3 flex items-center gap-3">
                 <button onClick={dictate} className={`btn-ghost text-sm py-2 ${listening ? 'border-primary text-primary' : ''}`}><Mic size={16} /> {listening ? '■' : t.dictate}</button>
-                <span className="text-xs text-muted-foreground">{t.dictateNote}</span>
+                <span className="text-sm text-muted-foreground">{t.dictateNote}</span>
               </div>
             )}
           </div>
@@ -328,7 +328,7 @@ export function Check() {
 
 function QualityNote({ q, label }: { q: VoiceFeatures['quality']; label: string }) {
   return (
-    <div className={`text-xs rounded-lg px-3 py-2 ${q.ok ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-800'}`}>
+    <div className={`text-sm rounded-lg px-3 py-2 ${q.ok ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-800'}`}>
       {label}: {q.ok ? 'OK' : q.warnings.join(' ')} · {q.durationS.toFixed(1)} s · SNR {q.snrDb.toFixed(0)} dB
     </div>
   );

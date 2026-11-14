@@ -24,7 +24,7 @@ export function Wordmark({ light = false }: { light?: boolean }) {
   return (
     <span className="flex items-center gap-2.5">
       <Logo size={28} light={light} />
-      <span className={`text-[17px] font-normal tracking-[0.32em] ${light ? 'text-cream' : 'text-deep'}`}>SEULA</span>
+      <span className={`text-xl font-medium tracking-tight ${light ? 'text-cream' : 'text-deep'}`}>seula</span>
     </span>
   );
 }
@@ -72,7 +72,7 @@ export function Cite({ k, children }: { k: string; children?: ReactNode }) {
   const s = SOURCES[k];
   if (!s) return null;
   return (
-    <a href={s.url} target="_blank" rel="noopener noreferrer" title={s.label} className="text-xs text-muted-foreground underline decoration-dotted underline-offset-2 hover:text-deep inline-flex items-center gap-0.5">
+    <a href={s.url} target="_blank" rel="noopener noreferrer" title={s.label} className="text-sm text-muted-foreground underline decoration-dotted underline-offset-2 hover:text-deep inline-flex items-center gap-0.5">
       {children ?? s.label}
       <ArrowUpRight size={11} />
     </a>
@@ -103,7 +103,7 @@ export function LevelBadge({ level, long = false }: { level: Level; long?: boole
 export function Stat({ value, label, cite, accent = false }: { value: ReactNode; label: ReactNode; cite?: string; accent?: boolean }) {
   return (
     <div>
-      <div className={`font-serif font-light text-5xl md:text-6xl tnum leading-none ${accent ? 'text-primary' : 'text-deep'}`}>{value}</div>
+      <div className={`font-medium text-5xl md:text-6xl tnum leading-none ${accent ? 'text-primary' : 'text-deep'}`}>{value}</div>
       <p className="text-[15px] text-muted-foreground mt-3 leading-snug">{label}</p>
       {cite && <div className="mt-1"><Cite k={cite} /></div>}
     </div>

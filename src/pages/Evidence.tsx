@@ -70,10 +70,10 @@ export function Evidence() {
                 <Scatter data={V.synthetic.features.cpps.points.map(([x, y]) => ({ x, y }))} fill="#3d79b8" fillOpacity={0.7} />
               </ScatterChart>
             </ResponsiveContainer>
-            <p className="text-xs text-muted-foreground">Dashed line: published dysphonia cut-off 14.45 dB <Cite k="murton2020" />. Both tools put nearly every voice on the same side of it.</p>
+            <p className="text-sm text-muted-foreground">Dashed line: published dysphonia cut-off 14.45 dB <Cite k="murton2020" />. Both tools put nearly every voice on the same side of it.</p>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground mt-3">Limitation: synthetic voices prove measurement agreement, not clinical accuracy. <code>analysis/validate_voice.py --voiced DIR</code> reruns everything on the open VOICED database (PhysioNet) once downloaded; it was not reachable from our build environment.</p>
+        <p className="text-sm text-muted-foreground mt-3">Limitation: synthetic voices prove measurement agreement, not clinical accuracy. <code>analysis/validate_voice.py --voiced DIR</code> reruns everything on the open VOICED database (PhysioNet) once downloaded; it was not reachable from our build environment.</p>
       </Claim>
 
       <Claim n={3} title="Voice adds signal where the larynx is the question, and little elsewhere" ok={false}>
@@ -90,7 +90,7 @@ export function Evidence() {
         <details className="text-sm">
           <summary className="cursor-pointer text-muted-foreground">Held-out errors ({TE.heldOut.errors.length})</summary>
           <ul className="mt-2 space-y-1">
-            {TE.heldOut.errors.map((e) => <li key={e.text} className="font-mono text-xs">“{e.text}” expected [{e.expected.join(', ')}] got [{e.got.join(', ')}]</li>)}
+            {TE.heldOut.errors.map((e) => <li key={e.text} className="font-mono text-sm">“{e.text}” expected [{e.expected.join(', ')}] got [{e.got.join(', ')}]</li>)}
           </ul>
         </details>
         <p className="text-sm text-muted-foreground mt-3">Design choice: text never changes the triage level. It only shows “mentioned but not ticked” so the doctor asks. A missed mention costs nothing extra; a false one costs a question.</p>
@@ -127,7 +127,7 @@ function Metric({ v, l, muted }: { v: number; l: string; muted?: boolean }) {
   return (
     <div>
       <div className={`text-3xl font-bold tnum ${muted ? 'text-muted-foreground' : ''}`}>{v.toFixed(2)}</div>
-      <div className="text-xs text-muted-foreground">{l}</div>
+      <div className="text-sm text-muted-foreground">{l}</div>
     </div>
   );
 }
@@ -175,7 +175,7 @@ function AucExplorer() {
           <p className="text-muted-foreground">Mean HNR and F0 did not differ between laryngeal cancer and benign lesions, and HNR variability differed only in men <Cite k="jenkins2025" />. Voice cannot tell cancer from a polyp; the laryngoscopy does.</p>
         </div>
       </div>
-      <p className="text-xs text-muted-foreground mt-3">For lung and colorectal cancer there is no validated voice marker, so the questionnaire carries those cancers. Voice there only adds phonation time (respiratory reserve) as information.</p>
+      <p className="text-sm text-muted-foreground mt-3">For lung and colorectal cancer there is no validated voice marker, so the questionnaire carries those cancers. Voice there only adds phonation time (respiratory reserve) as information.</p>
     </div>
   );
 }

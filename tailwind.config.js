@@ -21,8 +21,8 @@ export default {
       },
       fontFamily: {
         sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
-        serif: ['Newsreader', 'Georgia', 'serif'],
-        display: ['Newsreader', 'Georgia', 'serif'],
+        serif: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        display: ['"DM Sans"', 'system-ui', 'sans-serif'],
       },
       borderRadius: { '4xl': '2.5rem' },
     },

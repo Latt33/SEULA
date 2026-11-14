@@ -37,7 +37,7 @@ export function Impact() {
                 <span className="tnum font-semibold">{m.fmt(p[m.key])}</span>
               </div>
               <input type="range" className="w-full" min={m.min} max={m.max} step={m.step} value={p[m.key]} onChange={(e) => setP({ ...p, [m.key]: +e.target.value })} />
-              <p className="text-xs text-muted-foreground leading-snug">
+              <p className="text-sm text-muted-foreground leading-snug">
                 <span className={`chip mr-1 ${m.kind === 'sourced' ? 'bg-blue-50 text-[#175cd3]' : 'bg-amber-50 text-amber-800'}`}>{m.kind}</span>
                 {m.note} {m.source && <Cite k={m.source} />}
               </p>
@@ -53,7 +53,7 @@ export function Impact() {
               <Tile v={fmt(r.fte, 1)} l="physician FTE equivalent" />
               <Tile v={eur(r.timeValue)} l="value of time freed" accent />
             </div>
-            <p className="text-xs text-muted-foreground mt-4">Break-even: SEULA covers all its own costs and the extra tests at <b className="tnum">{breakEvenMin.toFixed(2)} min</b> saved per visit.</p>
+            <p className="text-sm text-muted-foreground mt-4">Break-even: SEULA covers all its own costs and the extra tests at <b className="tnum">{breakEvenMin.toFixed(2)} min</b> saved per visit.</p>
           </div>
 
           <div className="card p-6">
@@ -80,10 +80,10 @@ export function Impact() {
               <span className="font-semibold">Net</span>
               <span className={`text-2xl font-bold tnum ${r.net >= 0 ? 'text-emerald-700' : 'text-[#a8483f]'}`}>{eur(r.net)}</span>
             </div>
-            {r.net < 0 && <p className="text-xs text-muted-foreground mt-1">Net cost per additional 5-year survivor: <b className="tnum">€{fmt(r.costPerSurvivor)}</b></p>}
+            {r.net < 0 && <p className="text-sm text-muted-foreground mt-1">Net cost per additional 5-year survivor: <b className="tnum">€{fmt(r.costPerSurvivor)}</b></p>}
           </div>
 
-          <div className="card p-5 text-xs text-muted-foreground space-y-1 font-mono">
+          <div className="card p-5 text-sm text-muted-foreground space-y-1 font-mono">
             <p>hours = forms × minutes ÷ 60 · value = forms × minutes × €/min</p>
             <p>flagged = forms × flag rate · cancers = flagged × yield</p>
             <p>survivors = cancers × earlier share × survival gain</p>
@@ -109,7 +109,7 @@ function Tile({ v, l, accent }: { v: string; l: string; accent?: boolean }) {
   return (
     <div>
       <div className={`text-2xl md:text-3xl font-bold tnum ${accent ? 'text-[#3d79b8]' : ''}`}>{v}</div>
-      <div className="text-xs text-muted-foreground leading-tight mt-1">{l}</div>
+      <div className="text-sm text-muted-foreground leading-tight mt-1">{l}</div>
     </div>
   );
 }

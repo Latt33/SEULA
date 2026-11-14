@@ -25,19 +25,20 @@
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
+  font-size: 17px;
   font-family: 'DM Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   background: rgb(var(--background-rgb));
   color: rgb(var(--foreground-rgb));
 }
-h1, h2 { font-family: 'Newsreader', Georgia, serif; font-weight: 300; line-height: 1.05; letter-spacing: -0.025em; }
-h3, h4 { font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; }
+h1, h2, h3, h4 { font-weight: 500; line-height: 1.15; letter-spacing: -0.02em; }
+h1 { letter-spacing: -0.03em; }
 .prose-serif { font-family: inherit; }
 .tnum { font-variant-numeric: tabular-nums; }
 
 .card { @apply bg-cream rounded-3xl border border-line; }
 .card-cream { @apply bg-mist rounded-3xl; }
-.eyebrow { @apply text-xs font-medium uppercase tracking-[0.14em] text-deep; }
+.eyebrow { @apply text-base font-medium text-primary; }
 .btn { @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium transition-colors; }
 .btn-primary { @apply btn bg-deep text-cream hover:bg-night; }
 .btn-ghost { @apply btn bg-transparent border border-deep/25 text-deep hover:bg-mist; }
