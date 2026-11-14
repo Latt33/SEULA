@@ -3,7 +3,7 @@ SEULA x MedGemma: chest X-ray pre-read service.
 
 MedGemma 1.5 4B (Google, open weights, Health AI Developer Foundations) reads the chest
 X-ray that SEULA ordered, compares it with a prior X-ray, marks suspicious areas and
-returns a priority for the radiologist's worklist. Runs on one GPU on Modal; a county
+returns a priority for the radiologist's worklist. Runs on one GPU on Modal (first free of L4, A10G, L40S, A100); a county
 can run the same container on its own hardware, so images stay in Finland.
 
 Deploy:
@@ -69,7 +69,7 @@ def _boxes(text: str):
     return out
 
 
-@app.cls(gpu="L4", image=image, volumes={"/root/.cache/huggingface": cache},
+@app.cls(gpu=["L4", "A10G", "L40S", "A100-40GB"], image=image, volumes={"/root/.cache/huggingface": cache},
          secrets=[modal.Secret.from_name("huggingface")], scaledown_window=900, timeout=600)
 class MedGemma:
     @modal.enter()
