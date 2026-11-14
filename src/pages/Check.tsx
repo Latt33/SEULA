@@ -8,6 +8,9 @@ import { analyzeReadSpeech, analyzeSustainedVowel, SpeechFeatures, VoiceFeatures
 import { EQ_DIMS, EQ_LEVELS, G8_ITEMS, Lang, SYMPTOMS_I18N, T, VHI10 } from '../data/i18n';
 import { useSession } from '../store/session';
 
+/** Demo booking profile: age arrives with the appointment, not from the patient. */
+const BOOKING_AGE = 62;
+
 const SYMPTOM_GROUPS: SymptomKey[][] = [
   ['cough', 'haemoptysis', 'sob', 'chestPain', 'chestInfections'],
   ['fatigue', 'weightLoss', 'appetiteLoss'],
@@ -40,7 +43,8 @@ function Choice({ options, value, onChange }: { options: { v: string | number; l
 export function Check() {
   const [lang, setLang] = useState<Lang>('fi');
   const t = T[lang];
-  const [a, setA] = useState<Answers>({ symptoms: {} });
+  // Age comes from the appointment booking in practice, so the form never asks. The demo uses a fixed profile.
+  const [a, setA] = useState<Answers>({ symptoms: {}, age: BOOKING_AGE });
   const [step, setStep] = useState(0);
   const [voice, setVoice] = useState<VoiceFeatures>();
   const [speech, setSpeech] = useState<SpeechFeatures>();
@@ -52,7 +56,7 @@ export function Check() {
   const set = (p: Partial<Answers>) => setA((x) => ({ ...x, ...p }));
 
   const steps = useMemo(() => {
-    const s = ['intro', 'about', 'smoking', 'symptoms'];
+    const s = ['intro', 'smoking', 'symptoms'];
     if (a.symptoms.hoarseness) s.push('vhi');
     if ((a.age ?? 0) >= 70) s.push('g8');
     s.push('eq', 'voice', 'words', 'done');
@@ -62,7 +66,6 @@ export function Check() {
   const progress = step / (steps.length - 1);
 
   const canNext = () => {
-    if (cur === 'about') return !!a.age && a.age >= 18 && a.age < 110 && !!a.sex;
     if (cur === 'smoking') return !!a.smoking && (a.smoking === 'never' || (!!a.cigsPerDay && !!a.yearsSmoked && (a.smoking === 'current' || a.yearsSinceQuit !== undefined)));
     if (cur === 'vhi') return a.vhi10?.length === 10 && a.vhi10.every((v) => v !== undefined);
     if (cur === 'g8') return G8_ITEMS.every((i) => a.g8?.[i.key] !== undefined);
@@ -140,18 +143,6 @@ export function Check() {
           </div>
         )}
 
-        {cur === 'about' && (
-          <div>
-            <h2 className="text-3xl text-deep mb-6">{t.aboutYou}</h2>
-            <Field label={t.age}><input className={inputCls} type="number" inputMode="numeric" value={a.age ?? ''} onChange={(e) => set({ age: e.target.value ? +e.target.value : undefined })} /></Field>
-            <Field label={t.sex}><Choice options={[{ v: 'f', label: t.female }, { v: 'm', label: t.male }]} value={a.sex} onChange={(v) => set({ sex: v })} /></Field>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label={t.height}><input className={inputCls} type="number" inputMode="numeric" value={a.heightCm ?? ''} onChange={(e) => set({ heightCm: e.target.value ? +e.target.value : undefined })} /></Field>
-              <Field label={t.weight}><input className={inputCls} type="number" inputMode="numeric" value={a.weightKg ?? ''} onChange={(e) => set({ weightKg: e.target.value ? +e.target.value : undefined })} /></Field>
-            </div>
-          </div>
-        )}
-
         {cur === 'smoking' && (
           <div>
             <h2 className="text-3xl text-deep mb-6">{t.smokingT}</h2>
@@ -163,12 +154,6 @@ export function Check() {
                   <Field label={t.years}><input className={inputCls} type="number" inputMode="numeric" value={a.yearsSmoked ?? ''} onChange={(e) => set({ yearsSmoked: e.target.value ? +e.target.value : undefined })} /></Field>
                 </div>
                 {a.smoking === 'former' && <Field label={t.quit}><input className={inputCls} type="number" inputMode="numeric" value={a.yearsSinceQuit ?? ''} onChange={(e) => set({ yearsSinceQuit: e.target.value ? +e.target.value : undefined })} /></Field>}
-                <Field label={t.education}>
-                  <select className={inputCls} value={a.education ?? ''} onChange={(e) => set({ education: (+e.target.value || undefined) as Answers['education'] })}>
-                    <option value="">–</option>
-                    {t.eduOpts.map((o, i) => <option key={o} value={i + 1}>{o}</option>)}
-                  </select>
-                </Field>
               </>
             )}
             <div className="space-y-2 mt-2">

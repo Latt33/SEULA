@@ -20,7 +20,7 @@ export function anamnesis(a: Answers, r: Assessment, v?: VoiceFeatures, s?: Spee
   const L: string[] = [];
   if (lang === 'fi') {
     L.push(`ESITIEDOT (potilaan ilmoittamat, SEULA ${date})`);
-    L.push(`${a.age ?? '?'}-v ${a.sex === 'f' ? 'nainen' : a.sex === 'm' ? 'mies' : ''}. BMI ${r.scores.bmi?.toFixed(1) ?? '–'}.`);
+    L.push(`${a.age ?? '?'}-v ${a.sex === 'f' ? 'nainen' : a.sex === 'm' ? 'mies' : 'potilas'}.${r.scores.bmi ? ` BMI ${r.scores.bmi.toFixed(1)}.` : ''}`);
     L.push(`${SMOKING_FI[a.smoking ?? 'never']}${r.scores.packYears ? `, ${r.scores.packYears.toFixed(0)} askivuotta` : ''}${a.copd ? '. COPD.' : '.'}`);
     L.push(`Oireet: ${sym.length ? sym.join(', ') : 'ei hälytysoireita'}.`);
     if (a.freeText) L.push(`Omin sanoin: "${a.freeText.trim()}"`);
@@ -31,7 +31,7 @@ export function anamnesis(a: Answers, r: Assessment, v?: VoiceFeatures, s?: Spee
     L.push(`SEULA-luokitus: ${LEVEL_META[r.level].label}. ${r.findings.filter((f) => f.level !== 'info').map((f) => f.action).join('; ')}`);
   } else {
     L.push(`PRE-VISIT HISTORY (patient-reported via SEULA, ${date})`);
-    L.push(`${a.age ?? '?'}-year-old ${a.sex === 'f' ? 'woman' : a.sex === 'm' ? 'man' : 'patient'}. BMI ${r.scores.bmi?.toFixed(1) ?? '–'}.`);
+    L.push(`${a.age ?? '?'}-year-old ${a.sex === 'f' ? 'woman' : a.sex === 'm' ? 'man' : 'patient'}.${r.scores.bmi ? ` BMI ${r.scores.bmi.toFixed(1)}.` : ''}`);
     L.push(`${SMOKING[a.smoking ?? 'never']}${r.scores.packYears ? `, ${r.scores.packYears.toFixed(0)} pack-years` : ''}${a.copd ? '. Known COPD.' : '.'}${a.familyLungCancer ? ' Family history of lung cancer.' : ''}`);
     L.push(`Symptoms: ${sym.length ? sym.join(', ') : 'no red-flag symptoms'}.`);
     if (a.freeText) L.push(`In own words: "${a.freeText.trim()}"`);
